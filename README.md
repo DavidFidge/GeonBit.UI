@@ -4,7 +4,16 @@
 
 GeonBit.UI provides all the basic UI elements required to make a game / editor UI, and comes with few built-in UI skins compatible for commercial projects.
 
-To see a GeonBit.UI demo, clone the project, build the solution (it may fail the first time due to the content builder not being able to find one of the .dlls. The second time will succeed). Then start the GeonBit.UI.Examples project to play with the demo app.
+To play with a demo:
+
+Clone the repo
+```git clone https://github.com/DireAussie/GeonBit.UI.git```
+
+Build it twice (the first build will give an error with the Content builder as it requires one of the .dlls to be pre-built)
+```dotnet build .\GeonBit.UI.sln; dotnet build .\GeonBit.UI.sln;```
+
+Run the exe
+```.\GeonBit.UI.Example\bin\Debug\netcoreapp3.1\GeonBit.UI.Example.exe```
 
 Full API documentation available here: [Online docs](https://github.com/DireAussie/GeonBit.UI/wiki).
 
