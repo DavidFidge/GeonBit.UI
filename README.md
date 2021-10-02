@@ -2,26 +2,23 @@
 
 # GeonBit.UI
 
-UI extension for MonoGame-based projects by Ronen Ness.
+GeonBit.UI provides all the basic UI elements required to make a game / editor UI, and comes with few built-in UI skins compatible for commercial projects.
 
-Get it from: [GeonBit.UI git](https://github.com/RonenNess/GeonBit.UI).
+To play with a demo:
 
-Full API documentation available here: [Online docs](https://ronenness.github.io/GeonBit.UI-docs/).
+Clone the repo
 
-## What's GeonBit
+```git clone https://github.com/DireAussie/GeonBit.UI.git```
 
-[GeonBit](https://github.com/RonenNess/GeonBit) is an Entity-Component-System based game engine, powered by MonoGame.
+Build it twice (the first build will give an error with the Content builder as it requires one of the .dlls to be pre-built)
 
+```dotnet build .\GeonBit.UI.sln; dotnet build .\GeonBit.UI.sln;```
 
-## What's GeonBit.UI
+Run the exe
 
-**GeonBit.UI** is the UI / HUD system of the *GeonBit* engine, exported as an independent MonoGame extension under the MIT license.
+```.\GeonBit.UI.Example\bin\Debug\netcoreapp3.1\GeonBit.UI.Example.exe```
 
-It provide all the basic UI elements required to make a game / editor UI, and comes with few built-in UI skins compatible for commercial projects.
-
-To see a GeonBit.UI demo, check out this YouTube video:
-
-[![GeonBit.UI Demo](http://img.youtube.com/vi/sSs_RqgUaBA/0.jpg)](http://www.youtube.com/watch?v=sSs_RqgUaBA "GeonBit.UI Demo")
+Full API documentation available here: [Online docs](https://github.com/DireAussie/GeonBit.UI/wiki).
 
 ## Key Features
 
@@ -79,9 +76,6 @@ Before choosing GeonBit.UI, here are few caveats you should know about:
 
 #### Only tested on windows
 
-GeonBit.UI was developed and tested on 3 different machines, with windows 8 and 10.
-Theoretically It should work on any platform supported by MonoGame, but it might require some tweaks for some devices.
-
 #### Text Input is pretty basic.
 
 The text input widget is pretty basic and don't support advance text editing and things like copy & paste, selection, etc.
@@ -100,76 +94,39 @@ Note: supporting touch input requires some implementation from your side. More a
 In the repository root you will find the following files and folders:
 
 1. ```GeonBit.UI.sln```: a Visual Studio solution with GeonBit.UI source + example code.
-2. ```Documentation.chm```: full API documentation file (auto-generated).
-3. ```GeonBit.UI/```: folder containing all the source code and resources of GeonBit.UI.
+2. ```GeonBit.UI/```: folder containing all the source code of GeonBit.UI.
+3. ```GeonBit.UI.Example/```: folder containing a demo app that demonstrates the different features and entities GeonBit.UI provides.
+4. ```GeonBit.UI.Documentation/```: used to build documentation for the Wiki of this site
+5. ```GeonBit.UI.DataTypes/```: used for content builder serialization
 
-Inside the ```GeonBit.UI/``` folder you will find the following files and folders:
-
-1. ```Content```: all the resources GeonBit.UI rely on. You will need to import some of it (explained in installation instructions coming up next).
-2. ```GeonBit.UI```: GeonBit.UI source code (cs files).
-3. ```Libs```: additional libs you need to compile with GeonBit.UI (currently there's only one).
-4. ```GeonBitUI_Examples.cs``` and ```program.cs```: GeonBit.UI demo app that demonstrate the different features and entities GeonBit.UI provides.
-
-To see GeonBit.UI live before installing it in your project, you can open and run the solution file.
-Please note however that you might need to install some fonts first from ```GeonBit.UI/Content/Fonts/``` folder.
+To see GeonBit.UI live before installing it in your project, you can open the solution and run the GeonBit.UI.Example project.
 
 # Install
 
-Note: GeonBit.UI require MonoGame 3.6 to run. For older MonoGame versions, please see [tag 2.1.0.0](https://github.com/RonenNess/GeonBit.UI/releases/tag/2.1.0.0).
+Note: GeonBit.UI require MonoGame 3.8 to run. For older MonoGame versions, please see [tag 2.1.0.0](https://github.com/RonenNess/GeonBit.UI/releases/tag/2.1.0.0).
 
-You can either install GeonBit.UI with NuGet or manually.
-
-## Via NuGet
-
-First, run the NuGet install command:
-
-```
-Install-Package GeonBit.UI
-```
-
-Now there are two things to update in the Content Manager:
-
-1. Add a ```Reference``` to the DataTypes.dll lib, located in ```packages\GeonBit.UI.<version>\lib\geonbitui\```
-2. During installation, GeonBit.UI placed a folder in ```Content\GeonBit.UI```. Add this whole folder, as-is, to your content manager (when asked if to copy or link files, choose link, since the folder is already in its right place).
-
-That's it! Just few things to remember:
-
-- If you don't have the default themes fonts installed, you need to install the fonts from ```GeonBit.UI/GeonBit.UI/Content/Fonts/```.
-- If you want to edit the default themes (textures, styles, etc), its recommended to *copy* the theme to a new folder and never change the original package files, since they will be overridden next time you update GeonBit.UI via NuGet.
-- If your development environment is on Linux, there are few more steps to follow: [Installing on Linux](#extra-steps-for-linux).
-
+Currently you must reference the libraries directly until I set up a nuget package for this fork.
 
 ## Manual Install
 
 To manually install GeonBit.UI into your project, follow these steps:
 
-1. **Copy source:** Copy the source code from ```GeonBit.UI/GeonBit.UI/``` into your project source root (just copy the whole folder as-is).
-2. **Add content:** Copy all the Content from ```GeonBit.UI/GeonBit.UI/Content/GeonBit.UI/``` into your MonoGame pipeline Manager (can be done by clicking on "add folder" and selecting the GeonBit.UI folder).
-3. **Install fonts:** You might need to install some fonts that GeonBit.UI uses and don't come by default in windows / linux. To do so, go to the ```GeonBit.UI/GeonBit.UI/Content/Fonts/``` folder and install all the fonts there (they are all free to use including for commercial purposes).
-4. **Build DataTypes dll:** Due to the way resources compile in MonoGame, there's a need to compile additional dll that contains serializable data types:
- 1. Open the project inside ```GeonBit.UI/GeonBit.UI/Libs/```, build it, and add the output dll (```DataTypes.dll```) to your *Content pipeline* ```References``` property and to your *Project Reference* dlls.
- 2. You can build only in ```release``` mode, since you'll probably never need to debug it.
- 3. You can use the example ```GeonBit.UI.sln``` solution to quickly build it without opening a new solution file.
+1. **Copy source:** Copy the source code from ```GeonBit.UI/``` into your project source root (just copy the whole folder as-is).
+2. **Copy source:** Copy the source code from ```GeonBit.UI.DataTypes/``` into your project source root (just copy the whole folder as-is).
+3. **Add reference:** Add a reference to the ```GeonBit.UI/GeonBit.UI.csproj``` file in your project
+4. **Add content:** Copy all the Content files from ```GeonBit.UI.Examples/Content``` into your MonoGame pipeline Manager.  You'll need to merge your Content.mgcb with the Content.mgcb from ```GeonBit.UI.Examples/Content```
+5. **Build DataTypes dll:** Due to the way resources compile in MonoGame, there's a need to compile additional dll that contains serializable data types:
+6. Open the ```GeonBit.UI.DataTypes/GeonBit.UI.DataTypes.csproj``` project, build it, then copy the GeonBit.UI.DataTypes.dll file alongside your Content.mgcb file.  Ensure the Content.mgcb has a reference to this file: ```/reference:GeonBit.UI.DataTypes.dll```.  It *MUST* be in the same directory due to MonoGame bug 6509. 
+
+Alternatively, steps 1, 2, and 3 can be replaced by getting the repo, building in Release config, copy the GeonBit.UI and GeonBit.UI.DataTypes.dll to a libs folder and referencing the .dlls in your project.
 
 That's it. You should now be able to compile and use GeonBit.UI in your projects.
-
-To see a 5-minutes video tutorial illustrating the process, check out this YouTube video:
-
-[![GeonBit.UI Install](http://img.youtube.com/vi/dt3URcN45XM/0.jpg)](http://www.youtube.com/watch?v=dt3URcN45XM "GeonBit.UI Install")
-
-If you ever choose to remove GeonBit.UI from your project, simply follow these steps:
-
-1. Delete the ```GeonBit.UI``` content folder from your content pipeline.
-2. Delete the ```GeonBit.UI``` source folder from your solution / project source code.
-3. Remove the ```References``` to the DataTypes dll from the pipeline manager and your project.
 
 ## Extra steps for Linux
 
 There are few more things to do if you use Linux:
 
-1. After installing the fonts from ```GeonBit.UI/GeonBit.UI/Content/Fonts/```, you also need to copy the font files into the folder where the spritefont files reside (e.g. ```Content/GeonBit.UI/themes/<team-name>/fonts/```).
-2. Since at this time MonoGame can't build effects on Linux, you need to use a pre-compiled effects. Take the built effects from ```Content/BuiltEffects/``` and put them instead of the ```.fx``` files of your theme (e.g. ```Content/GeonBit.UI/themes/<team-name>/effects/```). Also change their 'Build Action' from 'Build' to 'Copy'.
-
+Since at this time MonoGame can't build effects on Linux, you need to use a pre-compiled effects. Take the built effects from ```Content/BuiltEffects/``` and put them instead of the ```.fx``` files of your theme (e.g. ```Content/GeonBit.UI/themes/<team-name>/effects/```). Also change their 'Build Action' from 'Build' to 'Copy'.
 
 # Using GeonBit.UI
 
@@ -1712,384 +1669,45 @@ var entities = UserInterface.Active.Root.ToEntitiesDictionary();
 entities["some_button"].OnClick = ....
 ```
 
-
 # Migration
 
 This part describe steps needed when upgrading breaking versions.
 
+## prior -> 3x
 
-## 1x -> 2x
+Refer to [RonenNess/GeonBit.UI](https://github.com/RonenNess/GeonBit.UI)
 
-When upgrading from 1x version to 2x version, follow these steps:
+## 3x -> 4x
 
-1. ```UserInterface``` is now a static class. Don't create it anymore, just Initialize() it.
-2. ```UserInterface``` Initialize now takes two params: 'Content' and theme identifier.
-3. In the Content Manager, remove and add again the ```Reference``` to DataTypes.dll.
-4. Cursor texture files changed + added cursor metadata. If you are using default themes remove and add them again. If you use custom theme checkout the cursor-related files in ```theme/<id>/textures/``` to figure out how to arrange your cursor files and metadata.
-5. If you used ```DrawUtils``` note that its no longer a static class, its now an instance under ```UserInterface```.
-6. To prevent blurriness, Paragraphs base size changed from ```1.175f``` to ```1f```. Its better this way, but if you want to keep texts at the same size, set ```Paragraph.BaseSize = 1.175f```.
-7. ```UserInterface.SCALE``` was renamed to ```UserInterface.GlobalScale```.
+DataTypes.dll has been renamed to GeonBit.UI.DataTypes.dll.  Your project and Content.mgcb references will need to be changed for the new name.
 
+# Change Log
 
-## 2.0.2.1 -> 2.1.0.0
+## 3.4.0.1 and prior
 
-When upgrading from 2.0.2.1 version to 2.1.0.0 version, the ```UserInterface``` class turns from static to an instance class, with ```UserInterface.Active``` always pointing at the currently active interface.
+Refer to [RonenNess/GeonBit.UI](https://github.com/RonenNess/GeonBit.UI)
 
-This means that everywhere you accessed ```UserInterface``` you should now access ```UserInterface.Active```.
+## 4.0
 
-## 2x -> 3x
+Restructured projects into 4 distinct projects
 
-Changed binaries to be for MonoGame 3.6 (instead of 3.5).
-GeonBit.UI on MonoGame 3.5 is no longer supported. If you need older MG versions, please see release [2.1.0.0](https://github.com/RonenNess/GeonBit.UI/releases/tag/2.1.0.0).
+- GeonBit.UI (is now a standalone library rather than being library + example project)
+- GeonBit.UI.DataTypes (it is no longer a child project inside GeonBit.UI)
+- GeonBit.UI.Example (standalone, no longer built into GeonBit.UI)
+- GeonBit.UI.Documentation (for building Sandcastle documentation)
 
+Updated to MonoGame 3.8
 
-# Final Words
+Updated to .NET Core 3.1.  Currently cannot go up to .NET 5 as the Content builder depends on .NET Core 3.1.
 
-## License
+# Credits
 
-GeonBit.UI is distributed under the MIT license, and is 100% free to use for any commercial or non-commercial purpose.
+GeonBit.UI was originally written by Ronen Ness and uses textures from opengameart freeware.
 
-## Contact
-
-For bug report, questions or feature requests, please use the [GitHub Issues](https://github.com/RonenNess/GeonBit.UI/issues/) section.
-
-For anything else, feel free to contact me directly at [ronenness@gmail.com](mailto:ronenness@gmail.com).
-
-## Change Log
-
-### 1.0.0
-
-First stable released version.
-
-### 1.0.1
-
-This release contains lots of small bugs fixes and general improvements, mostly from first users feedbacks and more in-depth tests.
-
-- Fixed slider Min value + Scaling + odd steps count mark positioning bug.
-- Fixed positioning of empty paragraphs with Auto anchors.
-- Made draggable entities always move to top when dragging start.
-- Changed entities focus condition to be when mouse pressed on them, instead of released.
-- Made draggable entities only start dragging when focused.
-- Added scaling property to checkboxes / radio buttons.
-- Fixed SelectList hightlight when scaled.
-- Fixed draggable entities positioning bugs when screen is scaled.
-- Fixed scrollbars mark positioning when scaled.
-- Removed the forced x3 width factor for panels and buttons frames.
-- Some graphic updates to the default HD theme.
-- Fixed locked text-input with scrollbar scaling + wrapping issue.
-
-### 1.0.2
-
-Improvements and new features.
-
-- Added function in InputHelper to change mouse position.
-- Added source rectangle for images.
-- Added background color for icons.
-- Fixed dropdown / list selection problem when scaling.
-- Optimize strings usage and getting keyboard input to produce less garbage.
-- Added shadow scale style property.
-- Added button custom skins.
-- Added option to change panel and buttons skins after creation.
-- Added Identifier to all entities + Find() functionality to locate children by identifier and / or type.
-- Added support in size percents (e.g. size that is certain percent of its parent size).
-- Added BringToFront() helper function.
-- New entity: PanelTabs.
-- Made all entities support Outline styling by default.
-
-### 1.0.2b
-
-Made NuGet package and update to docs / readme.
-
-### 2.0.0.0
-
-Refactored UserInterface and some entity behaviors which were flawed.
-The changes in this version break the API and may require some code changes on migration.
-
-- Changed UserInterface to be a fully static class.
-- Made DrawUtils a non-static class, instantiated by UserInterface. This gives the ability to create an alternative DrawUtils and change the basic behavior.
-- Changed Paragraphs default size to 1f, so fonts won't be scaled and blurry by default.
-- Renamed the UserInterface 'SCALE' property into 'GlobalScale'.
-- Refactored cursors and their types, Added IBeam cursor, and added an option to use custom cursors via the UserInterface.
-- Added 'PromiscuousClicksMode' to entities to make them behave similar to windows. Most entities by default won't be in 'Promiscuous' mode.
-- Added 'OnEntitySpawn' event, to make an easy place to init all newly created entities.
-
-### 2.0.1.0
-
-Some bug fixes, optimizations, and few new features.
-
-- Improved dragging behavior + can set position while dragged (useful for snapping to grid).
-- Extended DropDown API to make it more flexible.
-- Reimplemented DropDown in a less patchy way.
-- Added arrow that changes up/down to DropDown.
-- Fixed mouse down event so it want trigger multiple event calls when mouse goes in and out of entity's boundaries.
-- Added RenderTarget mode that draws everything on a RenderTarget instead of the default BackBuffer.
-- Added overflow modes to panels.
-- Added max items property to lists.
-- Added access to the UserInterface Root panel, which is useful for Find() etc.
-- Improved sliders and scrollbars behavior and steps count.
-- Added optimizations to only recalculate entities destination rect when needed.
-- Changed default fonts.
-- Added option for LineSpace with size 0.
-
-### 2.0.1.1
-
-Bug fixes and some more optimizations.
-
-- Fixed DropDown events.
-- Fixed DropDown exception when setting value before adding to parent.
-- Internal optimizations with render targets.
-- Internal optimizations with strings.
-- Fixed leakage with panel render targets.
-
-### 2.0.2.0
-
-Bug fixes and improvements to API.
-
-- Fixed exception when clearing a panel with scrollbars.
-- Added click-through feature, to make entities pass events through them.
-- Fixed mouse leave and mouse up events when entity becomes invisible / disabled.
-- Added ```UserInterface.TargetEntity``` that you can use to determine the entity currently pointed on.
-- Added option to insert child at a given index.
-- Refactor - made entities ```DefaultSize``` a static property, so you can access things like ```Button.DefaultSize``` without having to instantiate it.
-- Fixed out-of-screen buttons in tabs panel that's attached to the top of the screen.
-- Added option to easily set per-panel skin in tabs panel.
-
-### 2.0.2.1
-
-- Improved strings usage.
-- Added project to build GeonBit.UI with MonoGame 3.6.
-- Fixed DefaultSize static property to work with inheritance.
-- Added ```Clear()``` to UserInterface.
-- Provided public getter for the root panel.
-- Fixed DropDown and auto-anchoring while inside tabs panel.
-
-### 2.1.0.0
-
-- Added multicolor paragraphs and label to progress bars (Thanks MrCapitalG!).
-- Made the ```UserInterface``` no longer a static class, instead there's ```UserInterface.Active``` that holds the currently active interface. This is useful to switch between UI layouts completely.
-
-### 3.0.0.0
-
-Switched to MonoGame 3.6.
-For older MonoGame versions, see [tag 2.1.0.0](https://github.com/RonenNess/GeonBit.UI/releases/tag/2.1.0.0).
-
-### 3.0.0.1
-
-- Added auto Max for vertical scrollbars.
-- Fixed bug with lists with height of 0.
-- Added option to lock specific items in SelectList.
-- Made the MulticolorParagraph the default paragraph type the built-in entities use, with an option to override this behavior via a paragraph generator function.
-- Fixed bug with MulticolorParagraph shadow/outline and scaling.
-- Added new theme: editor.
-
-### 3.0.1.1
-
-- Removed redundant exception that caused warning on some compilers.
-- Made vertical scrollbar adjust max automatically by default.
-- Fixed vertical scrollbar with global scale.
-- Refactored panel tabs - fixed bugs and made cleaner code (note: this slightly change their behavior).
-- Optimized getting sorted children list - less garbage and sorting per frame.
-- Refactored panels with scrollbar implementation - fixed bugs and made cleaner code.
-
-### 3.0.1.2
-
-- Fixed opacity bug.
-- Added finer control over blending mode and sampler state.
-- Changed progressbar label to be click-through by default, to make sure the progressbar can be dragged if not locked.
-- Fixed paragraphs that are not left-aligned click and mouse-over detection.
-- Fixed combobox and radio buttons label positioning with global scaling.
-- Fixed mouse position on first frame of a new User Interface.
-
-### 3.0.1.3
-
-- Added outline opacity property.
-- Added some text validators.
-- Improved existing text validators efficiency + added support in spaces / no spaces. 
-- Added utility to generate message boxes.
-
-### 3.0.1.4
-
-- Added silent exceptions mode.
-- Added custom exceptions for different cases.
-- Renamed DropDown.cs file.
-- Fixed panel scrollbar update - so it won't be called during interaction, to prevent bugs while scrolling and size changes.
-- Fixed dropdown problems when inside scrolled panel.
-- Better sliders and scrollbars behavior when changing max value.
-- Fixed scrollbars to move one step when clicking on edge.
-- Fixed sliders and scrollbars default steps count value.
-- Fixed sliders and scrollbars when inside a panel with scrollbar.
-- Added focus changed event and callback.
-- Added default empty value property to text inputs.
-
-### 3.0.2.0
-
-- Changed textures to load lazily and only if used (instead of just loading everything during init).
-- Added tooltip text.
-- Changed the BeforeDraw callback to run before drawing background entity.
-- Added background color property to paragraphs.
-- Improved the way lists and dropdown works + fixed selection color.
-- Adding entity functions now return the newly added entity.
-
-### 3.0.2.1
-
-- Fixed bug with dropdown width when its size is relative (for example 0.5f).
-- Fixed tooltip text for complex entities like dropdown and lists.
-- Fixed default tooltip text to never leave screen boundaries.
-- Added AllowReselectValue mode to lists and dropdown entities.
-- Fixed propagating events in lists and dropdown + added base function for that.
-- Changed so that selecting the same value in a dropdown would still close it.
-- Added msg boxes counter to msg boxes utility + a getter to check if there's anything opened.
-- Added extra margin property to allow better control on entities selection. 
-- Fixed the annoying selection gap in lists and dropdown (clicking right between the lines).
-- Fixed disposing render targets properly + adding the IDisposable API to UserInterface and Panels. 
-
-### 3.0.2.2
-
-- Fixed list selection highlight with global scaling bug.
-- Added auto clipping for items that are too long in lists and dropdown. This behavior can controlled by list properties.
-- Added auto-height for lists and dropdowns.
-- Fixed bug with dropdown default text not updating when set without selecting value.
-- Added utility to create simple file menu.
-
-### 3.0.2.3
-
-- Fixed exception in panels with hidden overflow behavior.
-- Added an option to hide text input characters with a chosen character (for example for password input field).
-
-### 3.1.0.1
-
-- Removed the 'input' param from all the internal functions.
-- Added support in transformation matrix.
-- Added support in drawing cursor outside rendering targets.
-- Fixed a bug that re-creates input managers for no reason whenever creating new UserInterface(). 
-
-### 3.1.0.2
-
-- Added functions to get / set pixels of image texture.
-- Added function to get texture coords from position.
-- Added MouseHoverOrDown event.
-- Added font override property to all paragraph types.
-- Added MinSize and MaxSize property to entities.
-- Added CalcAutoWidth() / CalcAutoHeight() to Image entity.
-- Added set of callbacks for right mouse buttons.
-
-### 3.1.0.3
-
-- Fixed bug with icon enum to icon filename on linux.
-
-### 3.1.0.4
-
-- Changed StyleProperty from class to struct, to generate less garbage.
-- Added "drawing phase" param to entity draw, so we'll know what part we are drawing at this call.
-- Fixed bug with icons background shadow / outline color and opacity.
-- Fixed slug validator to allow numbers.
-
-### 3.1.0.5
-
-- Added PriorityBonus to entities.
-- Separated drawing children into a virtual function so users will be able to override it.
-- Replaced 'Disabled' property with 'Enabled' (but Disabled is still supported just deprecated).
-- Fixed text entities to allow using spaces as placeholders with auto anchoring.
-- Made text entities slightly more efficient in performance and memory when changing value / calculating size.
-- Fixed Min/Max size with paragraphs and text entities.
-- Changed order of MouseDown / WhileMouseDown and MouseEnter / WhileMouseHover events.
-- Fixed dropdown not to close if dragging scrollbar outside boundaries.
-- Added some helper functions to Input Helper.
-- Added exception when trying to use non mono-space font, which is not supported.
-
-### 3.2.0.0
-
-- Fixed show-cursor property when using render targets.
-- Made Entity class abstract, since it makes no sense to instantiate it.
-- Removed GetChildren(), added 'Children' property instead.
-- Fixed bug with setting offset of dragged entities.
-- Moved `TabData` outside of `PanelTabs`.
-- Added Anchor and Offset public properties.
-- Added `PopulateDict` function to convert tree to flat dictionary.
-- Fixed Find<> with generic `Entity` type.
-- Optimized processing multicolor text.
-- Optimized stylesheet and memory usage.
-- Created base panel class for better handling entities that are based on panels.
-- Added way to change text input multiline mode.
-- Extended dropdown and list API + added per-item-select events.
-- Added serialize / deserialize functionality.
-
-### 3.3.0.0
-
-- Added debug rendering to show destination rects, offsets, etc.
-- Fixed bug when clearing entity's children and it didn't update.
-- Fixed SpaceBefore property on first item in container.
-- Fixed bug with tabs panel buttons and scaling.
-- Added new anchor type: AutoInlineNoBreak.
-- API improvements (note: may break old code).
-- Fixed exception with select list update (out of range).
-- Fixed BringToFront with inherit parent properties setting.
-- Added SendToBack() function.
-- Changed PopulateDict into ToEntitiesDictionary().
-- Changed some public functions to be internal / protected.
-- Renamed IsInsideEntity() to IsTouching().
-- Added MouseInput provider interface, allowing the user to implement alternative mouse-based input methods (like touch).
-- Added KeyboardInput provider interface, allowing the user to implement alternative keyboard-based input methods.
-- Fixed global scaling with percent-based sizes that grow / shrink too much.
-
-### 3.4.0.0
-
-- Fixed crash with Turkish locale and loading textures (and potentially other languages).
-- Moved default size property to be part of the theme stylesheet, and not hard-coded (note: this breaks old themes - need to add the new property).
-- Improved return value of the message boxes utility to return a useful object with Close() function.
-- Added auto height properly for panels.
-- Added optional custom texture for panels.
-- Improved multicolor paragraph efficiency when don't actually have colors (removed redundant calculations).
-- Added utility to generate grid / columns.
-- Changed built-in themes default scales to produce sharper results.
-- Turned 'MulticolorParagraph' into 'RichParagraph' and added option to change font style.
-- Added new built-in style instructions for RichParagraph.
-- Added animators, currently including: typewriter, fadeout, and float up-down animations.
-- Added per-character animations.
-- Added 'Forms' to quickly create a UI form and fetch fields data using a simple list of field descriptors.
-- Made paragraph of message boxes RichParagraph by default.
-- Misc code refactors and improvements.
-
-### 3.4.0.1
-
-- Memory and GC optimizations - contributed by Matt Swift.
-- Fixed missing ToolTipText bug with form entities.
-- Fixed default size for TextInput with multilines.
-- Added min size for panels when auto-adjust height.
-- Added support in line up / down when editing multiline text input.
-- Added useful getter functions for specific types in form (string, int, float, bool..)
-- Added default value to form GetValue() methods.
-- Fixed bug with animators not working in panels that have clipping overflow when mouse is outside boundaries.
-
-## Credits
-
-GeonBit.UI was written by Ronen Ness, but uses some free textures made by awesome people who share their work for free.
-Most of the graphics are by Michele Bucelli ("Buch"), from this OpenGameArt entry: http://opengameart.org/content/golden-ui.
-
-In addition, I used some icons from the following sources:
-
+- http://opengameart.org/content/golden-ui.
 - http://opengameart.org/content/roguelikerpg-icons
 - http://opengameart.org/content/roguelikerpg-items
 - http://opengameart.org/content/arabian-icons
 - http://opengameart.org/content/2d-static-spritesicons
 - http://opengameart.org/content/30-ability-icons
 - http://opengameart.org/content/whispers-of-avalon-item-icons
-
-If you like GeonBit.UI, consider supporting these artists.
-
-### Contributors
-
-The following people contributed to the project via pull requests:
-
-#### Justin Gattuso (MrCapitalG)
-
-- Added MulticolorParagraph entity (later turned into RichParagraph).
-
-#### Craig Johnston
-
-- Bug fixes in dragging entities and mouse down events.
-
-#### Matt Swift
-
-- Memory optimizations.
-
