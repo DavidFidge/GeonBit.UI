@@ -1,6 +1,8 @@
-![GeonBit.UI](assets/img/GeonBitUI-sm.png "GeonBit.UI")
-
 # GeonBit.UI
+
+This fork is a derivative work of https://github.com/RonenNess/GeonBit.UI, modified for my own needs. Please head there for the latest version from the original author Ronen Ness.
+
+# Overview
 
 GeonBit.UI provides all the basic UI elements required to make a game / editor UI, and comes with few built-in UI skins compatible for commercial projects.
 
