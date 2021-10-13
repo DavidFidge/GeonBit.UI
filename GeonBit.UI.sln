@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31702.278
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeonBit.UI", "GeonBit.UI\GeonBit.UI.csproj", "{DD284F36-FCD5-4265-AE4C-28B9A38B9DEF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeonBit.UI.Example", "GeonBit.UI.Example\GeonBit.UI.Example.csproj", "{38415340-6617-4D2C-9EF6-DB3E144B376E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeonBit.UI.Examples", "GeonBit.UI.Examples\GeonBit.UI.Examples.csproj", "{38415340-6617-4D2C-9EF6-DB3E144B376E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeonBit.UI.DataTypes", "GeonBit.UI.DataTypes\GeonBit.UI.DataTypes.csproj", "{0918814F-C334-46A9-9C83-D91FB065D167}"
 EndProject
