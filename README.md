@@ -17,11 +17,13 @@ Full API documentation available here: [Online docs](https://ronenness.github.io
 
 **GeonBit.UI** is the UI / HUD system of the *GeonBit* engine, exported as an independent MonoGame extension under the MIT license.
 
-It provide all the basic UI elements required to make a game / editor UI, and comes with few built-in UI skins compatible for commercial projects.
+It provide all the basic UI elements required to make a game / editor UI, and comes with few built-in UI skins compatible with commercial projects.
 
-To see a GeonBit.UI demo, check out this YouTube video:
+To see a GeonBit.UI demo, check out this YouTube video (very old version):
 
 [![GeonBit.UI Demo](http://img.youtube.com/vi/sSs_RqgUaBA/0.jpg)](http://www.youtube.com/watch?v=sSs_RqgUaBA "GeonBit.UI Demo")
+
+Or download the git and run the `GeonBit.UI.Examples` project.
 
 ## Key Features
 
@@ -108,14 +110,13 @@ Inside the ```GeonBit.UI/``` folder you will find the following files and folder
 1. ```Content```: all the resources GeonBit.UI rely on. You will need to import some of it (explained in installation instructions coming up next).
 2. ```GeonBit.UI```: GeonBit.UI source code (cs files).
 3. ```Libs```: additional libs you need to compile with GeonBit.UI (currently there's only one).
-4. ```GeonBitUI_Examples.cs``` and ```program.cs```: GeonBit.UI demo app that demonstrate the different features and entities GeonBit.UI provides.
 
 To see GeonBit.UI live before installing it in your project, you can open and run the solution file.
 Please note however that you might need to install some fonts first from ```GeonBit.UI/Content/Fonts/``` folder.
 
 # Install
 
-Note: GeonBit.UI require MonoGame 3.6 to run. For older MonoGame versions, please see [tag 2.1.0.0](https://github.com/RonenNess/GeonBit.UI/releases/tag/2.1.0.0).
+Note: GeonBit.UI require MonoGame 3.6 or higher to run. For older MonoGame versions, please see [tag 2.1.0.0](https://github.com/RonenNess/GeonBit.UI/releases/tag/2.1.0.0).
 
 You can either install GeonBit.UI with NuGet or manually.
 
@@ -129,7 +130,7 @@ Install-Package GeonBit.UI
 
 Now there are two things to update in the Content Manager:
 
-1. Add a ```Reference``` to the DataTypes.dll lib, located in ```packages\GeonBit.UI.<version>\lib\geonbitui\```
+1. Add a ```Reference``` to the GeonBit.UI.DataTypes.dll lib, located in the nuget package folder.
 2. During installation, GeonBit.UI placed a folder in ```Content\GeonBit.UI```. Add this whole folder, as-is, to your content manager (when asked if to copy or link files, choose link, since the folder is already in its right place).
 
 That's it! Just few things to remember:
@@ -146,8 +147,8 @@ To manually install GeonBit.UI into your project, follow these steps:
 1. **Copy source:** Copy the source code from ```GeonBit.UI/GeonBit.UI/``` into your project source root (just copy the whole folder as-is).
 2. **Add content:** Copy all the Content from ```GeonBit.UI/GeonBit.UI/Content/GeonBit.UI/``` into your MonoGame pipeline Manager (can be done by clicking on "add folder" and selecting the GeonBit.UI folder).
 3. **Install fonts:** You might need to install some fonts that GeonBit.UI uses and don't come by default in windows / linux. To do so, go to the ```GeonBit.UI/GeonBit.UI/Content/Fonts/``` folder and install all the fonts there (they are all free to use including for commercial purposes).
-4. **Build DataTypes dll:** Due to the way resources compile in MonoGame, there's a need to compile additional dll that contains serializable data types:
- 1. Open the project inside ```GeonBit.UI/GeonBit.UI/Libs/```, build it, and add the output dll (```DataTypes.dll```) to your *Content pipeline* ```References``` property and to your *Project Reference* dlls.
+4. **Build GeonBit.UI.DataTypes dll:** Due to the way resources compile in MonoGame, there's a need to compile additional dll that contains serializable data types:
+ 1. Open the project inside ```GeonBit.UI/GeonBit.UI/Libs/```, build it, and add the output dll (```GeonBit.UI.DataTypes.dll```) to your *Content pipeline* ```References``` property and to your *Project Reference* dlls.
  2. You can build only in ```release``` mode, since you'll probably never need to debug it.
  3. You can use the example ```GeonBit.UI.sln``` solution to quickly build it without opening a new solution file.
 
@@ -2061,6 +2062,14 @@ For older MonoGame versions, see [tag 2.1.0.0](https://github.com/RonenNess/Geon
 - Added default value to form GetValue() methods.
 - Fixed bug with animators not working in panels that have clipping overflow when mouse is outside boundaries.
 
+### 4.0.6.1
+
+- Upgraded project to .net core 3.1.
+- Upgraded MonoGame version to 3.8.0.
+- Separated examples to a different project.
+- Fixed bug with line space and zoom (overflow panel).
+- Fixed bug with wrong slider being changed by mouse wheel after hover.
+
 ## Credits
 
 GeonBit.UI was written by Ronen Ness, but uses some free textures made by awesome people who share their work for free.
@@ -2079,7 +2088,7 @@ If you like GeonBit.UI, consider supporting these artists.
 
 ### Contributors
 
-The following people contributed to the project via pull requests:
+Some shoutouts to contributors:
 
 #### Justin Gattuso (MrCapitalG)
 
@@ -2092,4 +2101,8 @@ The following people contributed to the project via pull requests:
 #### Matt Swift
 
 - Memory optimizations.
+
+#### Marcel Hartel (sqrMin1)
+
+- Bug fixes.
 

@@ -27,7 +27,7 @@ using GeonBit.UI.Entities.TextValidators;
 using GeonBit.UI.DataTypes;
 using GeonBit.UI.Utils.Forms;
 
-namespace GeonBit.UI.Example
+namespace GeonBit.UI.Examples
 {
     /// <summary>
     /// GeonBit.UI.Example is just an example code. Everything here is not a part of the GeonBit.UI framework, but merely an example of how to use it.
@@ -978,7 +978,7 @@ Maybe something interesting in tab3?"));
                     };
                 }
 
-                // example: file menu
+                // example: top menu
                 {
                     // create panel and add to list of panels and manager
                     Panel panel = new Panel(new Vector2(750, -1));
@@ -986,9 +986,9 @@ Maybe something interesting in tab3?"));
                     UserInterface.Active.AddEntity(panel);
 
                     // add title and text
-                    panel.AddChild(new Header("File Menu"));
+                    panel.AddChild(new Header("Top Menu"));
                     panel.AddChild(new HorizontalLine());
-                    panel.AddChild(new Paragraph("GeonBit.UI comes with a utility to generate a classic file menu:"));
+                    panel.AddChild(new Paragraph("GeonBit.UI comes with a utility to generate a classic top menu:"));
 
                     var layout = new Utils.SimpleFileMenu.MenuLayout();
                     layout.AddMenu("File", 260);

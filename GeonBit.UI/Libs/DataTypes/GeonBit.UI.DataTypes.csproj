@@ -2,9 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <PackageLicenseFile>C:\Projects\GeonBit.UI\LICENSE</PackageLicenseFile>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <DocumentationFile>bin\GeonBit.UI.xml</DocumentationFile>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
@@ -18,23 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Content\bin\**" />
-    <Compile Remove="Content\obj\**" />
-    <Compile Remove="Libs\**" />
-    <EmbeddedResource Remove="Content\bin\**" />
-    <EmbeddedResource Remove="Content\obj\**" />
-    <EmbeddedResource Remove="Libs\**" />
-    <None Remove="Content\bin\**" />
-    <None Remove="Content\obj\**" />
-    <None Remove="Libs\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="Libs\DataTypes\GeonBit.UI.DataTypes.csproj" />
   </ItemGroup>
 
 </Project>
