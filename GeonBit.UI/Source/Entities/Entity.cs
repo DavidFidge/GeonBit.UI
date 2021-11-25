@@ -12,7 +12,6 @@
 // Since: 2016.
 //-----------------------------------------------------------------------------
 #endregion
-using System.Reflection;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -158,7 +157,7 @@ namespace GeonBit.UI.Entities
         {
             get
             {
-                return _children.AsReadOnly() as IReadOnlyList<Entity>;
+                return _children.AsReadOnly();
             }
         }
 
@@ -199,6 +198,12 @@ namespace GeonBit.UI.Entities
 
         // list of animators attached to this entity.
         private List<Animators.IAnimator> _animators = new List<Animators.IAnimator>();
+
+        /// <summary>
+        /// Optional tag we can attach to this entity, used for whatever purpose.
+        /// Tags are not used internally, and are similar to AttachedData but more string-oriented.
+        /// </summary>
+        public string Tag;
 
         /// <summary>
         /// Optional extra drawing priority, to bring certain objects before others.
@@ -283,14 +288,22 @@ namespace GeonBit.UI.Entities
         /// This is especially useful for entities with size that depends on their parent entity size, for example
         /// if you define an entity to take 20% of its parent space but can't be less than 200 pixels width.
         /// </summary>
-        public Vector2? MinSize { get { return _minSize; } set { _minSize = value;  MarkAsDirty(); } }
+        public Vector2? MinSize 
+        { 
+            get { return _minSize; } 
+            set { if (_minSize != value) { _minSize = value; MarkAsDirty(); } } 
+        }
 
         /// <summary>
         /// If defined, will limit the maximum size of this entity when calculating size.
         /// This is especially useful for entities with size that depends on their parent entity size, for example
         /// if you define an entity to take 20% of its parent space but can't be more than 200 pixels width.
         /// </summary>
-        public Vector2? MaxSize { get { return _maxSize; } set { _maxSize = value; MarkAsDirty(); } }
+        public Vector2? MaxSize 
+        { 
+            get { return _maxSize; } 
+            set { if (_maxSize != value) { _maxSize = value; MarkAsDirty(); } } 
+        }
 
         /// <summary>
         /// Every time we update destination rect and internal destination rect view the update function, we increase this counter.
@@ -704,7 +717,12 @@ namespace GeonBit.UI.Entities
         public bool Draggable
         {
             get { return _draggable; }
-            set { _needToSetDragOffset = _draggable != value; _draggable = value; MarkAsDirty(); }
+            set 
+            { 
+                _needToSetDragOffset = _draggable != value; 
+                _draggable = value;
+                MarkAsDirty(); 
+            }
         }
 
         /// <summary>
@@ -1059,8 +1077,11 @@ namespace GeonBit.UI.Entities
         /// <param name="anchor">New anchor to set.</param>
         private void SetAnchor(Anchor anchor)
         {
-            _anchor = anchor;
-            MarkAsDirty();
+            if (_anchor != anchor)
+            {
+                _anchor = anchor;
+                MarkAsDirty();
+            }
         }
 
         /// <summary>
@@ -1284,7 +1305,7 @@ namespace GeonBit.UI.Entities
         public Dictionary<string, Entity> ToEntitiesDictionary()
         {
             Dictionary<string, Entity> ret = new Dictionary<string, Entity>();
-            PopulateDict(ref ret);
+            PopulateDict(ret);
             return ret;
         }
 
@@ -1293,7 +1314,7 @@ namespace GeonBit.UI.Entities
         /// Note: if multiple entities share the same identifier, the deepest entity in hirarchy will end up in dict.
         /// </summary>
         /// <param name="dict">Dictionary to put entities into.</param>
-        private void PopulateDict(ref Dictionary<string, Entity> dict)
+        private void PopulateDict(Dictionary<string, Entity> dict)
         {
             // add self if got identifier
             if (Identifier != null && Identifier.Length > 0)
@@ -1302,7 +1323,7 @@ namespace GeonBit.UI.Entities
             // iterate children
             foreach(var child in _children)
             {
-                child.PopulateDict(ref dict);
+                child.PopulateDict(dict);
             }
         }
 

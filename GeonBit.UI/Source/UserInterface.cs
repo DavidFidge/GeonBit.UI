@@ -95,7 +95,7 @@ namespace GeonBit.UI
     public class UserInterface : System.IDisposable
     {
         /// <summary>Current GeonBit.UI version identifier.</summary>
-        public const string VERSION = "4.0.6.1";
+        public const string VERSION = "4.0.7.1";
 
         /// <summary>
         /// The currently active user interface instance.
@@ -203,7 +203,7 @@ namespace GeonBit.UI
         public float GlobalScale
         {
             get { return _scale; }
-            set { _scale = value; Root.MarkAsDirty(); }
+            set { if (_scale != value) { _scale = value; Root.MarkAsDirty(); } }
         }
 
         /// <summary>Cursor rendering size.</summary>
