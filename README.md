@@ -1675,21 +1675,23 @@ entities["some_button"].OnClick = ....
 
 This part describe steps needed when upgrading breaking versions.
 
-## prior -> 3x
+## Original GeonBit Migration
 
 Refer to [RonenNess/GeonBit.UI](https://github.com/RonenNess/GeonBit.UI)
 
-## 3x -> 4x
+## Original -> V1.0
 
 DataTypes.dll has been renamed to GeonBit.UI.DataTypes.dll.  Your project and Content.mgcb references will need to be changed for the new name.
 
 # Change Log
 
-## 3.4.0.1 and prior
+## GeonBit Change Log
 
 Refer to [RonenNess/GeonBit.UI](https://github.com/RonenNess/GeonBit.UI)
 
-## 4.0
+## My changes
+
+### V1.0
 
 Restructured projects into 4 distinct projects
 
@@ -1702,14 +1704,3 @@ Updated to MonoGame 3.8
 
 Updated to .NET Core 3.1.  Currently cannot go up to .NET 5 as the Content builder depends on .NET Core 3.1.
 
-# Credits
-
-GeonBit.UI was originally written by Ronen Ness and uses textures from opengameart freeware.
-
-- http://opengameart.org/content/golden-ui.
-- http://opengameart.org/content/roguelikerpg-icons
-- http://opengameart.org/content/roguelikerpg-items
-- http://opengameart.org/content/arabian-icons
-- http://opengameart.org/content/2d-static-spritesicons
-- http://opengameart.org/content/30-ability-icons
-- http://opengameart.org/content/whispers-of-avalon-item-icons
