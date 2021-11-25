@@ -1,6 +1,6 @@
 ﻿#region File Description
 //-----------------------------------------------------------------------------
-// Generate file menu layout.
+// Generate menu bar layout.
 //
 // Author: Ronen Ness.
 // Since: 2017.
@@ -13,17 +13,38 @@ using Microsoft.Xna.Framework;
 namespace GeonBit.UI.Utils
 {
     /// <summary>
-    /// A helper class to generate simple file-menu (top navbar) using panels and dropdown entities.
+    /// A helper class to generate a simple menu bar using panels and dropdown entities.
     /// </summary>
-    public static class SimpleFileMenu
+    public static class MenuBar
     {
         /// <summary>
-        /// Class used to define the file menu layout.
+        /// Struct to store params for when a menu item triggers its callback.
+        /// </summary>
+        public struct MenuCallbackContext
+        {
+            /// <summary>
+            /// Selected menu item index.
+            /// </summary>
+            public int ItemIndex;
+
+            /// <summary>
+            /// Selected menu item text.
+            /// </summary>
+            public string ItemText;
+
+            /// <summary>
+            /// Menu dropdown entity.
+            /// </summary>
+            public Entities.DropDown Entity;
+        }
+
+        /// <summary>
+        /// Class used to define the menu layout.
         /// </summary>
         public class MenuLayout
         {
             /// <summary>
-            /// A single menu in the file menu navbar.
+            /// A single menu in the menu bar navbar.
             /// </summary>
             internal class Menu
             {
@@ -45,7 +66,7 @@ namespace GeonBit.UI.Utils
                 /// <summary>
                 /// Actions attached to menu.
                 /// </summary>
-                public List<System.Action> Actions = new List<System.Action>();
+                public List<System.Action<MenuCallbackContext>> Actions = new List<System.Action<MenuCallbackContext>>();
             }
 
             /// <summary>
@@ -76,6 +97,17 @@ namespace GeonBit.UI.Utils
             /// <param name="onClick">On-click action.</param>
             public void AddItemToMenu(string menuTitle, string item, System.Action onClick)
             {
+                AddItemToMenu(menuTitle, item, (MenuCallbackContext ctx) => { onClick(); });
+            }
+
+            /// <summary>
+            /// Adds an item to a menu with advanced callback.
+            /// </summary>
+            /// <param name="menuTitle">Menu title to add item to.</param>
+            /// <param name="item">Item text.</param>
+            /// <param name="onClick">On-click action.</param>
+            public void AddItemToMenu(string menuTitle, string item, System.Action<MenuCallbackContext> onClick)
+            {
                 foreach (var menu in Layout)
                 {
                     if (menu.Title == menuTitle)
@@ -90,18 +122,19 @@ namespace GeonBit.UI.Utils
         }
 
         /// <summary>
-        /// Create the file menu and return the root panel.
-        /// The result would be a panel containing a group of dropdown entities, which implement the file menu layout.
+        /// Create the menu bar and return the root panel.
+        /// The result would be a panel containing a group of dropdown entities, which implement the menu layout.
         /// The id of every dropdown is "menu-[menu-title]".
-        /// Note: the returned file menu panel comes without parent, you need to add it to your UI tree manually.
+        /// Note: the returned menu bar panel comes without parent, you need to add it to your UI tree manually.
         /// </summary>
-        /// <param name="layout">Layout to create file menu for.</param>
-        /// <param name="skin">Skin to use for panels and dropdown of this file menu.</param>
+        /// <param name="layout">Layout to create menu bar with.</param>
+        /// <param name="skin">Skin to use for panels and dropdown of this menu.</param>
         /// <returns>Menu root panel.</returns>
         static public Entities.Panel Create(MenuLayout layout, Entities.PanelSkin skin = Entities.PanelSkin.Simple)
         {
             // create the root panel
             var rootPanel = new Entities.Panel(new Vector2(0, Entities.DropDown.SelectedPanelHeight), skin, Entities.Anchor.TopLeft);
+            rootPanel.PriorityBonus = 10000;
             rootPanel.Padding = Vector2.Zero;
 
             // create menus
@@ -129,7 +162,8 @@ namespace GeonBit.UI.Utils
                     var callback = menu.Actions[i];
                     if (callback != null)
                     {
-                        dropdown.OnSelectedSpecificItem(menu.Items[i], callback);
+                        var context = new MenuCallbackContext() { ItemIndex = i, ItemText = menu.Items[i], Entity = dropdown };
+                        dropdown.OnSelectedSpecificItem(menu.Items[i], () => { callback(context); });
                     }
                 }
             }

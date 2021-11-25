@@ -16,6 +16,7 @@ using GeonBit.UI.Entities;
 using GeonBit.UI.DataTypes;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Serialization;
 
 namespace GeonBit.UI
 {
@@ -23,7 +24,7 @@ namespace GeonBit.UI
     /// A class to get texture with index and constant path part.
     /// Used internally.
     /// </summary>
-    public class TexturesGetter<TEnum> where TEnum : IConvertible
+    public class TexturesGetter<TEnum> where TEnum : Enum, IConvertible
     {
         // textures we already loaded
         Texture2D[] _loadedTextures;
@@ -42,8 +43,24 @@ namespace GeonBit.UI
                 int indx = GetIndex(i);
                 if (_loadedTextures[indx] == null)
                 {
-                    var path = Resources._root + _basepath + EnumToString(i) + _suffix;
-                    _loadedTextures[indx] = Resources._content.Load<Texture2D>(path);
+                    var path = $"{Resources._root}{_basepath}{EnumToString(i)}{_suffix}";
+                    try
+                    {
+                        _loadedTextures[indx] = Resources._content.Load<Texture2D>(path);
+                    }
+                    catch (Microsoft.Xna.Framework.Content.ContentLoadException)
+                    {
+                        // for backward compatibility when alternative was called 'golden'
+                        if (i.ToString() == PanelSkin.Alternative.ToString())
+                        {
+                            path = $"{Resources._root}{_basepath}golden{_suffix}";
+                            _loadedTextures[indx] = Resources._content.Load<Texture2D>(path);
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
                 }
                 return _loadedTextures[indx];
             }
@@ -91,8 +108,8 @@ namespace GeonBit.UI
         private int GetIndex(TEnum i, EntityState? s = null)
         {
             if (s != null)
-                return (int)(object)i + (_typesCount * (int)s);
-            return (int)(object)i;
+                return Convert.ToInt32(i) + (_typesCount * (int)s);
+            return Convert.ToInt32(i);
         }
 
         /// <summary>
@@ -150,7 +167,7 @@ namespace GeonBit.UI
         /// </summary>
         /// <param name="path">Resource path, under geonbit.ui content.</param>
         /// <param name="suffix">Suffix to add to the texture path after the enum part.</param>
-        /// <param name="usesStates">If true, it means these textures may also use entit states, eg mouse hover / down / default.</param>
+        /// <param name="usesStates">If true, it means these textures may also use entity states, eg mouse hover / down / default.</param>
         public TexturesGetter(string path, string suffix = null, bool usesStates = true)
         {
             _basepath = path;
@@ -298,7 +315,22 @@ namespace GeonBit.UI
 
                 // load panels metadata
                 string skinName = skin.ToString().ToLowerInvariant();
-                PanelData[(int)skin] = content.Load<TextureData>(_root + "textures/panel_" + skinName + "_md");
+                try
+                {
+                    PanelData[(int)skin] = content.Load<TextureData>(_root + "textures/panel_" + skinName + "_md");
+                }
+                catch (Microsoft.Xna.Framework.Content.ContentLoadException ex)
+                {
+                    // for backwards compatability from when it was called 'Golden'.
+                    if (skin == PanelSkin.Alternative)
+                    {
+                        PanelData[(int)skin] = content.Load<TextureData>(_root + "textures/panel_golden_md");
+                    }
+                    else
+                    {
+                        throw ex;
+                    }
+                }
             }
 
             // load scrollbar metadata
@@ -336,35 +368,35 @@ namespace GeonBit.UI
             SilhouetteEffect = content.Load<Effect>(_root + "effects/silhouette");
 
             // load default styleSheets
-            LoadDefaultStyles(ref Entity.DefaultStyle, "Entity", _root, content);
-            LoadDefaultStyles(ref Paragraph.DefaultStyle, "Paragraph", _root, content);
-            LoadDefaultStyles(ref Button.DefaultStyle, "Button", _root, content);
-            LoadDefaultStyles(ref Button.DefaultParagraphStyle, "ButtonParagraph", _root, content);
-            LoadDefaultStyles(ref CheckBox.DefaultStyle, "CheckBox", _root, content);
-            LoadDefaultStyles(ref CheckBox.DefaultParagraphStyle, "CheckBoxParagraph", _root, content);
-            LoadDefaultStyles(ref ColoredRectangle.DefaultStyle, "ColoredRectangle", _root, content);
-            LoadDefaultStyles(ref DropDown.DefaultStyle, "DropDown", _root, content);
-            LoadDefaultStyles(ref DropDown.DefaultParagraphStyle, "DropDownParagraph", _root, content);
-            LoadDefaultStyles(ref DropDown.DefaultSelectedParagraphStyle, "DropDownSelectedParagraph", _root, content);
-            LoadDefaultStyles(ref Header.DefaultStyle, "Header", _root, content);
-            LoadDefaultStyles(ref HorizontalLine.DefaultStyle, "HorizontalLine", _root, content);
-            LoadDefaultStyles(ref Icon.DefaultStyle, "Icon", _root, content);
-            LoadDefaultStyles(ref Image.DefaultStyle, "Image", _root, content);
-            LoadDefaultStyles(ref Label.DefaultStyle, "Label", _root, content);
-            LoadDefaultStyles(ref Panel.DefaultStyle, "Panel", _root, content);
-            LoadDefaultStyles(ref ProgressBar.DefaultStyle, "ProgressBar", _root, content);
-            LoadDefaultStyles(ref ProgressBar.DefaultFillStyle, "ProgressBarFill", _root, content);
-            LoadDefaultStyles(ref RadioButton.DefaultStyle, "RadioButton", _root, content);
-            LoadDefaultStyles(ref RadioButton.DefaultParagraphStyle, "RadioButtonParagraph", _root, content);
-            LoadDefaultStyles(ref SelectList.DefaultStyle, "SelectList", _root, content);
-            LoadDefaultStyles(ref SelectList.DefaultParagraphStyle, "SelectListParagraph", _root, content);
-            LoadDefaultStyles(ref Slider.DefaultStyle, "Slider", _root, content);
-            LoadDefaultStyles(ref TextInput.DefaultStyle, "TextInput", _root, content);
-            LoadDefaultStyles(ref TextInput.DefaultParagraphStyle, "TextInputParagraph", _root, content);
-            LoadDefaultStyles(ref TextInput.DefaultPlaceholderStyle, "TextInputPlaceholder", _root, content);
-            LoadDefaultStyles(ref VerticalScrollbar.DefaultStyle, "VerticalScrollbar", _root, content);
-            LoadDefaultStyles(ref PanelTabs.DefaultButtonStyle, "PanelTabsButton", _root, content);
-            LoadDefaultStyles(ref PanelTabs.DefaultButtonParagraphStyle, "PanelTabsButtonParagraph", _root, content);
+            LoadDefaultStyles( Entity.DefaultStyle, "Entity", _root, content);
+            LoadDefaultStyles( Paragraph.DefaultStyle, "Paragraph", _root, content);
+            LoadDefaultStyles( Button.DefaultStyle, "Button", _root, content);
+            LoadDefaultStyles( Button.DefaultParagraphStyle, "ButtonParagraph", _root, content);
+            LoadDefaultStyles( CheckBox.DefaultStyle, "CheckBox", _root, content);
+            LoadDefaultStyles( CheckBox.DefaultParagraphStyle, "CheckBoxParagraph", _root, content);
+            LoadDefaultStyles( ColoredRectangle.DefaultStyle, "ColoredRectangle", _root, content);
+            LoadDefaultStyles( DropDown.DefaultStyle, "DropDown", _root, content);
+            LoadDefaultStyles( DropDown.DefaultParagraphStyle, "DropDownParagraph", _root, content);
+            LoadDefaultStyles( DropDown.DefaultSelectedParagraphStyle, "DropDownSelectedParagraph", _root, content);
+            LoadDefaultStyles( Header.DefaultStyle, "Header", _root, content);
+            LoadDefaultStyles( HorizontalLine.DefaultStyle, "HorizontalLine", _root, content);
+            LoadDefaultStyles( Icon.DefaultStyle, "Icon", _root, content);
+            LoadDefaultStyles( Image.DefaultStyle, "Image", _root, content);
+            LoadDefaultStyles( Label.DefaultStyle, "Label", _root, content);
+            LoadDefaultStyles( Panel.DefaultStyle, "Panel", _root, content);
+            LoadDefaultStyles( ProgressBar.DefaultStyle, "ProgressBar", _root, content);
+            LoadDefaultStyles( ProgressBar.DefaultFillStyle, "ProgressBarFill", _root, content);
+            LoadDefaultStyles( RadioButton.DefaultStyle, "RadioButton", _root, content);
+            LoadDefaultStyles( RadioButton.DefaultParagraphStyle, "RadioButtonParagraph", _root, content);
+            LoadDefaultStyles( SelectList.DefaultStyle, "SelectList", _root, content);
+            LoadDefaultStyles( SelectList.DefaultParagraphStyle, "SelectListParagraph", _root, content);
+            LoadDefaultStyles( Slider.DefaultStyle, "Slider", _root, content);
+            LoadDefaultStyles( TextInput.DefaultStyle, "TextInput", _root, content);
+            LoadDefaultStyles( TextInput.DefaultParagraphStyle, "TextInputParagraph", _root, content);
+            LoadDefaultStyles( TextInput.DefaultPlaceholderStyle, "TextInputPlaceholder", _root, content);
+            LoadDefaultStyles( VerticalScrollbar.DefaultStyle, "VerticalScrollbar", _root, content);
+            LoadDefaultStyles( PanelTabs.DefaultButtonStyle, "PanelTabsButton", _root, content);
+            LoadDefaultStyles( PanelTabs.DefaultButtonParagraphStyle, "PanelTabsButtonParagraph", _root, content);
         }
 
 
@@ -396,25 +428,55 @@ namespace GeonBit.UI
         }
 
         /// <summary>
+        /// Load xml styles either directly from xml file, or from the content manager.
+        /// </summary>
+        /// <param name="name">XML name.</param>
+        /// <param name="content">Content manager.</param>
+        /// <returns>Default styles loaded from xml or xnb.</returns>
+        private static DefaultStyles LoadXmlStyles(string name, ContentManager content)
+        {
+            // try to load xml directly from full path
+            string fullPath = System.IO.Path.Combine(content.RootDirectory, name + ".xml");
+            if (System.IO.File.Exists(fullPath))
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(DefaultStyles));
+                using (var reader = System.IO.File.OpenText(fullPath))
+                {
+                    XmlDeserializationEvents eventsHandler = new XmlDeserializationEvents()
+                    {
+                        OnUnknownAttribute = (object sender, XmlAttributeEventArgs e) => { throw new System.Exception("Error parsing file '" + fullPath + "': invalid attribute '" + e.Attr.Name + "' at line " + e.LineNumber); },
+                        OnUnknownElement = (object sender, XmlElementEventArgs e) => { throw new System.Exception("Error parsing file '" + fullPath + "': invalid element '" + e.Element.Name + "' at line " + e.LineNumber); },
+                        OnUnknownNode = (object sender, XmlNodeEventArgs e) => { throw new System.Exception("Error parsing file '" + fullPath + "': invalid element '" + e.Name + "' at line " + e.LineNumber); },
+                        OnUnreferencedObject = (object sender, UnreferencedObjectEventArgs e) => { throw new System.Exception("Error parsing file '" + fullPath + "': unreferenced object '" + e.UnreferencedObject.ToString() + "'"); },
+                    };
+                    return (DefaultStyles)serializer.Deserialize(System.Xml.XmlReader.Create(reader), eventsHandler);
+                }
+            }
+
+            // if xml file not found, try to load xnb instead
+            return content.Load<DefaultStyles>(name);
+        }
+
+        /// <summary>
         /// Load default stylesheets for a given entity name and put values inside the sheet.
         /// </summary>
         /// <param name="sheet">StyleSheet to load.</param>
         /// <param name="entityName">Entity unique identifier for file names.</param>
         /// <param name="themeRoot">Path of the current theme root directory.</param>
         /// <param name="content">Content manager to allow us to load xmls.</param>
-        private static void LoadDefaultStyles(ref StyleSheet sheet, string entityName, string themeRoot, ContentManager content)
+        private static void LoadDefaultStyles(StyleSheet sheet, string entityName, string themeRoot, ContentManager content)
         {
             // get stylesheet root path (eg everything before the state part)
             string stylesheetBase = themeRoot + "styles/" + entityName;
 
             // load default styles
-            FillDefaultStyles(ref sheet, EntityState.Default, content.Load<DefaultStyles>(stylesheetBase + "-Default"));
+            FillDefaultStyles(sheet, EntityState.Default, LoadXmlStyles($"{stylesheetBase}-Default", content));
 
             // load mouse-hover styles
-            FillDefaultStyles(ref sheet, EntityState.MouseHover, content.Load<DefaultStyles>(stylesheetBase + "-MouseHover"));
+            FillDefaultStyles(sheet, EntityState.MouseHover, LoadXmlStyles($"{stylesheetBase}-MouseHover", content));
 
             // load mouse-down styles
-            FillDefaultStyles(ref sheet, EntityState.MouseDown, content.Load<DefaultStyles>(stylesheetBase + "-MouseDown"));
+            FillDefaultStyles(sheet, EntityState.MouseDown, LoadXmlStyles($"{stylesheetBase}-MouseDown", content));
         }
 
         /// <summary>
@@ -423,22 +485,22 @@ namespace GeonBit.UI
         /// <param name="sheet">StyleSheet to fill.</param>
         /// <param name="state">State to fill values for.</param>
         /// <param name="styles">Default styles, as loaded from xml file.</param>
-        private static void FillDefaultStyles(ref StyleSheet sheet, EntityState state, DefaultStyles styles)
+        private static void FillDefaultStyles(StyleSheet sheet, EntityState state, DefaultStyles styles)
         {
-            if (styles.FillColor != null) { sheet[state.ToString() + "." + "FillColor"] = new StyleProperty((Color)styles.FillColor); }
-            if (styles.FontStyle != null) { sheet[state.ToString() + "." + "FontStyle"] = new StyleProperty((int)styles.FontStyle); }
-            if (styles.ForceAlignCenter != null) { sheet[state.ToString() + "." + "ForceAlignCenter"] = new StyleProperty((bool)styles.ForceAlignCenter); }
-            if (styles.OutlineColor != null) { sheet[state.ToString() + "." + "OutlineColor"] = new StyleProperty((Color)styles.OutlineColor); }
-            if (styles.OutlineWidth != null) { sheet[state.ToString() + "." + "OutlineWidth"] = new StyleProperty((int)styles.OutlineWidth); }
-            if (styles.Scale != null) { sheet[state.ToString() + "." + "Scale"] = new StyleProperty((float)styles.Scale); }
-            if (styles.SelectedHighlightColor != null) { sheet[state.ToString() + "." + "SelectedHighlightColor"] = new StyleProperty((Color)styles.SelectedHighlightColor); }
-            if (styles.ShadowColor != null) { sheet[state.ToString() + "." + "ShadowColor"] = new StyleProperty((Color)styles.ShadowColor); }
-            if (styles.ShadowOffset != null) { sheet[state.ToString() + "." + "ShadowOffset"] = new StyleProperty((Vector2)styles.ShadowOffset); }
-            if (styles.Padding != null) { sheet[state.ToString() + "." + "Padding"] = new StyleProperty((Vector2)styles.Padding); }
-            if (styles.SpaceBefore != null) { sheet[state.ToString() + "." + "SpaceBefore"] = new StyleProperty((Vector2)styles.SpaceBefore); }
-            if (styles.SpaceAfter != null) { sheet[state.ToString() + "." + "SpaceAfter"] = new StyleProperty((Vector2)styles.SpaceAfter); }
-            if (styles.ShadowScale != null) { sheet[state.ToString() + "." + "ShadowScale"] = new StyleProperty((float)styles.ShadowScale); }
-            if (styles.DefaultSize != null) { sheet[state.ToString() + "." + "DefaultSize"] = new StyleProperty((Vector2)styles.DefaultSize); }
+            if (styles.FillColor != null) { sheet[$"{state}.FillColor"] = new StyleProperty((Color)styles.FillColor); }
+            if (styles.FontStyle != null) { sheet[$"{state}.FontStyle"] = new StyleProperty((int)styles.FontStyle); }
+            if (styles.ForceAlignCenter != null) { sheet[$"{state}.ForceAlignCenter"] = new StyleProperty((bool)styles.ForceAlignCenter); }
+            if (styles.OutlineColor != null) { sheet[$"{state}.OutlineColor"] = new StyleProperty((Color)styles.OutlineColor); }
+            if (styles.OutlineWidth != null) { sheet[$"{state}.OutlineWidth"] = new StyleProperty((int)styles.OutlineWidth); }
+            if (styles.Scale != null) { sheet[$"{state}.Scale"] = new StyleProperty((float)styles.Scale); }
+            if (styles.SelectedHighlightColor != null) { sheet[$"{state}.SelectedHighlightColor"] = new StyleProperty((Color)styles.SelectedHighlightColor); }
+            if (styles.ShadowColor != null) { sheet[$"{state}.ShadowColor"] = new StyleProperty((Color)styles.ShadowColor); }
+            if (styles.ShadowOffset != null) { sheet[$"{state}.ShadowOffset"] = new StyleProperty((Vector2)styles.ShadowOffset); }
+            if (styles.Padding != null) { sheet[$"{state}.Padding"] = new StyleProperty((Vector2)styles.Padding); }
+            if (styles.SpaceBefore != null) { sheet[$"{state}.SpaceBefore"] = new StyleProperty((Vector2)styles.SpaceBefore); }
+            if (styles.SpaceAfter != null) { sheet[$"{state}.SpaceAfter"] = new StyleProperty((Vector2)styles.SpaceAfter); }
+            if (styles.ShadowScale != null) { sheet[$"{state}.ShadowScale"] = new StyleProperty((float)styles.ShadowScale); }
+            if (styles.DefaultSize != null) { sheet[$"{state}.DefaultSize"] = new StyleProperty((Vector2)styles.DefaultSize); }
         }
     }
 }

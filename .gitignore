@@ -5,7 +5,7 @@
 
 # Project specific files
 GeonBit.UI.Documentation/Help/
-GeonBit.UI.Example/Content/GeonBit.UI.DataTypes.dll
+GeonBit.UI.Examples/Content/GeonBit.UI.DataTypes.dll
 
 # User-specific files
 *.suo
