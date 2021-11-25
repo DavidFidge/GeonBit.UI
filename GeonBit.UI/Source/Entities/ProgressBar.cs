@@ -62,7 +62,7 @@ namespace GeonBit.UI.Entities
             // update default styles
             UpdateStyle(DefaultStyle);
 
-            if (!UserInterface.Active._isDeserializing)
+            if (!UserInterface.Active.IsDeserializing)
             {
                 // create the fill part
                 Padding = Vector2.Zero;

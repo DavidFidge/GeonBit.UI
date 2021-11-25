@@ -148,7 +148,7 @@ namespace GeonBit.UI.Entities
         /// <returns>Normalized value.</returns>
         protected int NormalizeValue(int value)
         {
-            if (!UserInterface.Active._isDeserializing)
+            if (!UserInterface.Active.IsDeserializing)
             {
                 // round to steps
                 float stepSize = (float)GetStepSize();

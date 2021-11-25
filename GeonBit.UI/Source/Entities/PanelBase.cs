@@ -42,7 +42,7 @@ namespace GeonBit.UI.Entities
     /// Used to group together entities with common logic.
     /// </summary>
     [System.Serializable]
-    public class PanelBase : Entity
+    public class PanelBase : Entity, IPanelBase
     {
         /// <summary>
         /// Static ctor.

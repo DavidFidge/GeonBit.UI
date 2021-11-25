@@ -90,7 +90,7 @@ namespace GeonBit.UI.Entities
             // update styles
             UpdateStyle(DefaultStyle);
 
-            if (!UserInterface.Active._isDeserializing)
+            if (!UserInterface.Active.IsDeserializing)
             {
                 // create and set button paragraph
                 ButtonParagraph = UserInterface.DefaultParagraph(text, Anchor.Center);

@@ -125,7 +125,7 @@ namespace GeonBit.UI.Entities
             // set limit by size - default true in single-line, default false in multi-line
             LimitBySize = !_multiLine;
 
-            if (!UserInterface.Active._isDeserializing)
+            if (!UserInterface.Active.IsDeserializing)
             {
 
                 // create paragraph to show current value

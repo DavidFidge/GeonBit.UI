@@ -135,7 +135,7 @@ namespace GeonBit.UI.Entities
     /// All entities inherit from this class and share this API.
     /// </summary>
     [System.Serializable]
-    public abstract class Entity
+    public abstract class Entity : IEntity
     {
         /// <summary>
         /// Static ctor.
@@ -495,6 +495,8 @@ namespace GeonBit.UI.Entities
 
         /// <summary>Currently calculated destination rect (eg the region this entity is drawn on).</summary>
         internal Rectangle _destRect;
+
+        public Rectangle DestRect => _destRect;
 
         /// <summary>Currently calculated internal destination rect (eg the region this entity children are positioned in).</summary>
         protected Rectangle _destRectInternal;
@@ -1142,7 +1144,7 @@ namespace GeonBit.UI.Entities
         /// <summary>
         /// Update dest rect and internal dest rect, but only if needed (eg if something changed since last update).
         /// </summary>
-        virtual internal protected void UpdateDestinationRectsIfDirty()
+        public virtual void UpdateDestinationRectsIfDirty()
         {
             // if dirty, update destination rectangles
             if (_parent != null && (_isDirty || (_parentLastDestRectVersion != _parent._destRectVersion)))
@@ -1668,11 +1670,11 @@ namespace GeonBit.UI.Entities
             }
 
             // get parent internal destination rectangle
-            var parentDest = UserInterface.Active.Root._destRect;
+            var parentDest = UserInterface.Active.Root.DestRect;
             if (_parent != null)
             {
                 _parent.UpdateDestinationRectsIfDirty();
-                parentDest = _parent._destRectInternal;
+                parentDest = _parent.InternalDestRect;
             }
 
             // calc and return size
@@ -1691,7 +1693,8 @@ namespace GeonBit.UI.Entities
             Rectangle ret = new Rectangle();
 
             // no parent? assume active interface root as parent
-            var parent = _parent;
+            IEntity parent = _parent;
+            
             if (parent == null)
             {
                 parent = UserInterface.Active.Root;
@@ -1708,7 +1711,7 @@ namespace GeonBit.UI.Entities
 
             // get parent internal destination rectangle
             parent.UpdateDestinationRectsIfDirty();
-            Rectangle parentDest = parent._destRectInternal;
+            Rectangle parentDest = parent.InternalDestRect;
 
             // set size:
             // 0: takes whole parent size.
@@ -1834,7 +1837,7 @@ namespace GeonBit.UI.Entities
                     }
 
                     // handle inline align that ran out of width / or auto anchor not inline
-                    if ((anchor == Anchor.AutoInline && ret.Right > parent._destRectInternal.Right) ||
+                    if ((anchor == Anchor.AutoInline && ret.Right > parent.InternalDestRect.Right) ||
                         (anchor == Anchor.Auto || anchor == Anchor.AutoCenter))
                     {
                         // align x
