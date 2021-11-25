@@ -63,7 +63,7 @@ namespace GeonBit.UI.Entities
             UpdateStyle(DefaultStyle);
 
             // create and set checkbox paragraph
-            if (!UserInterface.Active._isDeserializing)
+            if (!UserInterface.Active.IsDeserializing)
             {
                 TextParagraph = UserInterface.DefaultParagraph(text, Anchor.CenterLeft);
                 TextParagraph.UpdateStyle(DefaultParagraphStyle);

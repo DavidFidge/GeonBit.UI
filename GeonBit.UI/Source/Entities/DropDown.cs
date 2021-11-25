@@ -152,7 +152,7 @@ namespace GeonBit.UI.Entities
             // to get collision right when list is opened
             UseActualSizeForCollision = true;
 
-            if (!UserInterface.Active._isDeserializing)
+            if (!UserInterface.Active.IsDeserializing)
             {
 
                 // create the panel and paragraph used to show currently selected value (what's shown when drop-down is closed)
@@ -368,7 +368,7 @@ namespace GeonBit.UI.Entities
         private void OnDropDownVisibilityChange()
         {
             // if during deserialize, skip
-            if (UserInterface.Active._isDeserializing)
+            if (UserInterface.Active.IsDeserializing)
                 return;
 
             // update arrow image

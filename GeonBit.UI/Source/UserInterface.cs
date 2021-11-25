@@ -92,7 +92,7 @@ namespace GeonBit.UI
     /// Main GeonBit.UI class that manage and draw all the UI entities.
     /// This is the main manager you use to update, draw, and add entities to.
     /// </summary>
-    public class UserInterface : System.IDisposable
+    public class UserInterface : System.IDisposable, IUserInterface
     {
         /// <summary>Current GeonBit.UI version identifier.</summary>
         public const string VERSION = "4.0.7.1";
@@ -100,7 +100,7 @@ namespace GeonBit.UI
         /// <summary>
         /// The currently active user interface instance.
         /// </summary>
-        public static UserInterface Active = null;
+        public static IUserInterface Active { get; set; }
 
         /// <summary>
         /// The object that provide mouse input for GeonBit UI.
@@ -108,7 +108,7 @@ namespace GeonBit.UI
         /// If you want to use things like Touch input, you can override and replace this instance
         /// with your own object that emulates mouse input from different sources.
         /// </summary>
-        public IMouseInput MouseInputProvider;
+        public IMouseInput MouseInputProvider { get; set; }
 
         /// <summary>
         /// The object that provide keyboard and typing input for GeonBit UI.
@@ -116,7 +116,7 @@ namespace GeonBit.UI
         /// If you want to use alternative typing methods, you can override and replace this instance
         /// with your own object that emulates keyboard input.
         /// </summary>
-        public IKeyboardInput KeyboardInputProvider;
+        public IKeyboardInput KeyboardInputProvider { get; set; }
 
         /// <summary>
         /// Get current game time value.
@@ -135,16 +135,18 @@ namespace GeonBit.UI
         // are we currently during deserialization phase?
         internal bool _isDeserializing = false;
 
+        public bool IsDeserializing => _isDeserializing;
+
         /// <summary>
         /// If true, GeonBit.UI will not raise exceptions on sanity checks, validations, and errors which are not critical.
         /// For example, trying to select a value that doesn't exist from a list would do nothing instead of throwing exception.
         /// </summary>
-        public bool SilentSoftErrors = false;
-        
+        public bool SilentSoftErrors { get; set; }
+
         /// <summary>
         /// If true, will add debug rendering to UI.
         /// </summary>
-        public bool DebugDraw = false;
+        public bool DebugDraw { get; set; }
 
         /// <summary>
         /// Create a default paragraph instance.
@@ -181,17 +183,17 @@ namespace GeonBit.UI
         /// <summary>
         /// Get the root entity.
         /// </summary>
-        public RootPanel Root { get; private set; }
+        public IPanel Root => _root;
 
         /// <summary>
         /// Blend state to use when rendering UI.
         /// </summary>
-        public BlendState BlendState = BlendState.AlphaBlend;
+        public BlendState BlendState { get; set; } = BlendState.AlphaBlend;
 
         /// <summary>
         /// Sampler state to use when rendering UI.
         /// </summary>
-        public SamplerState SamplerState = SamplerState.PointClamp;
+        public SamplerState SamplerState { get; set; } = SamplerState.PointClamp;
 
         // the entity currently being dragged
         Entity _dragTarget;
@@ -203,95 +205,95 @@ namespace GeonBit.UI
         public float GlobalScale
         {
             get { return _scale; }
-            set { if (_scale != value) { _scale = value; Root.MarkAsDirty(); } }
+            set { if (_scale != value) { _scale = value; _root.MarkAsDirty(); } }
         }
 
         /// <summary>Cursor rendering size.</summary>
-        public float CursorScale = 1f;
+        public float CursorScale { get; set; } = 1f;
 
         /// <summary>Screen width.</summary>
-        public int ScreenWidth = 0;
+        public int ScreenWidth { get; set; }
 
         /// <summary>Screen height.</summary>
-        public int ScreenHeight = 0;
+        public int ScreenHeight { get; set; }
 
         /// <summary>Draw utils helper. Contain general drawing functionality and handle effects replacement.</summary>
-        public DrawUtils DrawUtils = null;
+        public DrawUtils DrawUtils { get; set; }
 
         /// <summary>Current active entity, eg last entity user interacted with.</summary>
-        public Entity ActiveEntity = null;
+        public Entity ActiveEntity { get; set; }
 
         /// <summary>The current target entity, eg what cursor points on. Can be null if cursor don't point on any entity.</summary>
         public Entity TargetEntity { get; private set; }
 
         /// <summary>Callback to execute when mouse button is pressed over an entity (called once when button is pressed).</summary>
-        public EventCallback OnMouseDown = null;
+        public EventCallback OnMouseDown { get; set; }
 
         /// <summary>Callback to execute when right mouse button is pressed over an entity (called once when button is pressed).</summary>
-        public EventCallback OnRightMouseDown = null;
+        public EventCallback OnRightMouseDown { get; set; }
 
         /// <summary>Callback to execute when mouse button is released over an entity (called once when button is released).</summary>
-        public EventCallback OnMouseReleased = null;
+        public EventCallback OnMouseReleased { get; set; }
 
         /// <summary>Callback to execute every frame while mouse button is pressed over an entity.</summary>
-        public EventCallback WhileMouseDown = null;
+        public EventCallback WhileMouseDown { get; set; }
 
         /// <summary>Callback to execute every frame while right mouse button is pressed over an entity.</summary>
-        public EventCallback WhileRightMouseDown = null;
+        public EventCallback WhileRightMouseDown { get; set; }
 
         /// <summary>Callback to execute every frame while mouse is hovering over an entity, unless mouse button is down.</summary>
-        public EventCallback WhileMouseHover = null;
+        public EventCallback WhileMouseHover { get; set; }
 
         /// <summary>Callback to execute every frame while mouse is hovering over an entity, even if mouse button is down.</summary>
-        public EventCallback WhileMouseHoverOrDown = null;
+        public EventCallback WhileMouseHoverOrDown { get; set; }
 
         /// <summary>Callback to execute when user clicks on an entity (eg release mouse over it).</summary>
-        public EventCallback OnClick = null;
+        public EventCallback OnClick { get; set; }
 
         /// <summary>Callback to execute when user clicks on an entity with right mouse button (eg release mouse over it).</summary>
-        public EventCallback OnRightClick = null;
+        public EventCallback OnRightClick { get; set; }
 
         /// <summary>Callback to execute when any entity value changes (relevant only for entities with value).</summary>
-        public EventCallback OnValueChange = null;
+        public EventCallback OnValueChange { get; set; }
 
         /// <summary>Callback to execute when mouse start hovering over an entity (eg enters its region).</summary>
-        public EventCallback OnMouseEnter = null;
+        public EventCallback OnMouseEnter { get; set; }
 
         /// <summary>Callback to execute when mouse stop hovering over an entity (eg leaves its region).</summary>
-        public EventCallback OnMouseLeave = null;
+        public EventCallback OnMouseLeave { get; set; }
 
         /// <summary>Callback to execute when mouse wheel scrolls and an entity is the active entity.</summary>
-        public EventCallback OnMouseWheelScroll = null;
+        public EventCallback OnMouseWheelScroll { get; set; }
 
         /// <summary>Called when entity starts getting dragged (only if draggable).</summary>
-        public EventCallback OnStartDrag = null;
+        public EventCallback OnStartDrag { get; set; }
 
         /// <summary>Called when entity stop getting dragged (only if draggable).</summary>
-        public EventCallback OnStopDrag = null;
+        public EventCallback OnStopDrag { get; set; }
 
         /// <summary>Called every frame while entity is being dragged.</summary>
-        public EventCallback WhileDragging = null;
+        public EventCallback WhileDragging { get; set; }
 
         /// <summary>Callback to execute every frame before entity update.</summary>
-        public EventCallback BeforeUpdate = null;
+        public EventCallback BeforeUpdate { get; set; }
 
         /// <summary>Callback to execute every frame after entity update.</summary>
-        public EventCallback AfterUpdate = null;
+        public EventCallback AfterUpdate { get; set; }
 
         /// <summary>Callback to execute every frame before entity is rendered.</summary>
-        public EventCallback BeforeDraw = null;
+        public EventCallback BeforeDraw { get; set; }
 
         /// <summary>Callback to execute every frame after entity is rendered.</summary>
-        public EventCallback AfterDraw = null;
+        public EventCallback AfterDraw { get; set; }
 
         /// <summary>Callback to execute every time the visibility property of an entity change.</summary>
-        public EventCallback OnVisiblityChange = null;
+        public EventCallback OnVisiblityChange { get; set; }
 
         /// <summary>Callback to execute every time a new entity is spawned (note: spawn = first time Update() is called on this entity).</summary>
-        public EventCallback OnEntitySpawn = null;
+        public EventCallback OnEntitySpawn { get; set; }
 
         /// <summary>Callback to execute every time an entity focus changes.</summary>
-        public EventCallback OnFocusChange = null;
+        public EventCallback OnFocusChange { get; set; }
 
         // cursor texture.
         Texture2D _cursorTexture = null;
@@ -322,18 +324,20 @@ namespace GeonBit.UI
         /// <summary>
         /// Optional transformation matrix to apply when drawing with render targets.
         /// </summary>
-        public Matrix? RenderTargetTransformMatrix = null;
+        public Matrix? RenderTargetTransformMatrix { get; set; }
 
         /// <summary>
         /// If using render targets, should the curser be rendered inside of it?
         /// If false, cursor will draw outside the render target, when presenting it.
         /// </summary>
-        public bool IncludeCursorInRenderTarget = true;
+        public bool IncludeCursorInRenderTarget { get; set; } = true;
 
         /// <summary>
         /// The function used to generate tooltip text on entities.
         /// </summary>
         public GenerateTooltipFunc GenerateTooltipFunc = DefaultGenerateTooltipFunc;
+
+        private RootPanel _root;
 
         /// <summary>
         /// Initialize UI manager (mostly load resources and set some defaults).
@@ -435,7 +439,7 @@ namespace GeonBit.UI
             DrawUtils = new DrawUtils();
 
             // create the root panel
-            Root = new RootPanel();
+            _root = new RootPanel();
 
             // set default cursor
             SetCursor(CursorType.Default);
@@ -547,7 +551,7 @@ namespace GeonBit.UI
             UpdateTooltipText(gameTime, target);
 
             // default active entity is root panel
-            ActiveEntity = ActiveEntity ?? Root;
+            ActiveEntity ??= _root;
 
             // set current target entity
             TargetEntity = target;
@@ -634,7 +638,7 @@ namespace GeonBit.UI
             {
                 ScreenWidth = newScreenWidth;
                 ScreenHeight = newScreenHeight;
-                Root.MarkAsDirty();
+                _root.MarkAsDirty();
             }
 
             // if using rendering targets
@@ -758,7 +762,7 @@ namespace GeonBit.UI
             try
             {
                 var reader = GetXmlSerializer();
-                Root = (RootPanel)reader.Deserialize(stream);
+                _root = (RootPanel)reader.Deserialize(stream);
             }
             // handle errors
             catch
@@ -769,7 +773,7 @@ namespace GeonBit.UI
 
             // init after finish deserializing
             _isDeserializing = false;
-            Root.InitAfterDeserialize();
+            _root.InitAfterDeserialize();
         }
 
         /// <summary>
@@ -797,6 +801,5 @@ namespace GeonBit.UI
             Deserialize(file);
             file.Close();
         }
-
     }
 }

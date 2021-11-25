@@ -101,7 +101,7 @@ namespace GeonBit.UI.Entities
             // remove self padding
             Padding = Vector2.Zero;
 
-            if (!UserInterface.Active._isDeserializing)
+            if (!UserInterface.Active.IsDeserializing)
             {
                 // create the internal panel that contains everything - buttons + panels
                 _internalRoot = new Panel(Vector2.Zero, PanelSkin.None, Anchor.TopCenter);
