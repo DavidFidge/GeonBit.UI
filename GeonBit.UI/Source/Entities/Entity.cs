@@ -1864,9 +1864,9 @@ namespace GeonBit.UI.Entities
             if (_draggable)
             {
                 // if need to init dragged offset, set it
-                // this trick is used so if an object is draggable, we first evaluate its position based on anchor etc, and we use that
+                // this trick is used so if an object is draggable, we first evaluate its position based on anchor, and we use that
                 // position as starting point for the dragging
-                if (_needToSetDragOffset)
+                if (_needToSetDragOffset && (parentDest.Width > 0) && (parentDest.Height > 0) && (ret.Height > 1))
                 {
                     _dragOffset.X = ret.X - parent_left;
                     _dragOffset.Y = ret.Y - parent_top;
@@ -2170,6 +2170,24 @@ namespace GeonBit.UI.Entities
         {
             OnFocusChange?.Invoke(this);
             UserInterface.Active.OnFocusChange?.Invoke(this);
+        }
+
+        /// <summary>
+        /// Change the value of this entity, where there's value to change.
+        /// </summary>
+        /// <param name="newValue">New value to set.</param>
+        /// <param name="emitEvent">If true and value changed, will emit 'ValueChanged' event.</param>
+        virtual public void ChangeValue(object newValue, bool emitEvent)
+        {
+        }
+
+        /// <summary>
+        /// Get the value of this entity, where there's value.
+        /// </summary>
+        /// <returns>Value as object.</returns>
+        virtual public object GetValue()
+        {
+            return null;
         }
 
         /// <summary>
