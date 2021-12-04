@@ -186,6 +186,53 @@ namespace GeonBit.UI.Entities
         }
 
         /// <summary>
+        /// Change an existing value in list.
+        /// </summary>
+        /// <param name="index">Index to change.</param>
+        /// <param name="newValue">New value to set.</param>
+        public void ChangeItem(int index, string newValue)
+        {
+            if (_list[index] != newValue)
+            {
+                _list[index] = newValue;
+                OnListChanged();
+            }
+        }
+
+        /// <summary>
+        /// Change an existing value in list.
+        /// </summary>
+        /// <param name="oldValue">Old value to change.</param>
+        /// <param name="newValue">New value to set.</param>
+        /// <param name="onlyFirst">If true, will stop after first value found.</param>
+        public void ChangeItem(string oldValue, string newValue, bool onlyFirst = false)
+        {
+            // do nothing if old == new
+            if (oldValue == newValue)
+            {
+                return;
+            }
+
+            // find and change value
+            bool didChange = false;
+            for (var i = 0; i < _list.Count; ++i)
+            {
+                if (_list[i] == oldValue)
+                {
+                    didChange = true;
+                    _list[i] = newValue;
+                    if (onlyFirst) { break; }
+                }
+            }
+
+            // invoke list change
+            if (didChange)
+            {
+                OnListChanged();
+            }
+        }
+
+        /// <summary>
         /// Add value to list.
         /// </summary>
         /// <remarks>Values can be duplicated, however, this will cause annoying behavior when trying to delete or select by value (will always pick the first found).</remarks>
@@ -538,6 +585,30 @@ namespace GeonBit.UI.Entities
 
             // call on-value-change event
             DoOnValueChange();
+        }
+
+        /// <summary>
+        /// Change the value of this entity, where there's value to change.
+        /// </summary>
+        /// <param name="newValue">New value to set.</param>
+        /// <param name="emitEvent">If true and value changed, will emit 'ValueChanged' event.</param>
+        override public void ChangeValue(object newValue, bool emitEvent)
+        {
+            var strValue = (string)newValue;
+            if (_value != strValue)
+            {
+                _value = strValue;
+                if (emitEvent) { DoOnValueChange(); }
+            }
+        }
+
+        /// <summary>
+        /// Get the value of this entity, where there's value.
+        /// </summary>
+        /// <returns>Value as object.</returns>
+        override public object GetValue()
+        {
+            return _value;
         }
 
         /// <summary>

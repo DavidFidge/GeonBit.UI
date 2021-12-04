@@ -124,7 +124,17 @@ namespace GeonBit.UI.Examples
 
             // add show-get button
             Button showGitButton = new Button("Git Repo", ButtonSkin.Fancy, Anchor.TopCenter, new Vector2(280, topPanelHeight));
-            showGitButton.OnClick = (Entity btn) => { System.Diagnostics.Process.Start("https://github.com/RonenNess/GeonBit.UI"); };
+            showGitButton.OnClick = (Entity btn) => 
+            {
+                try
+                {
+                    System.Diagnostics.Process.Start("https://github.com/RonenNess/GeonBit.UI");
+                }
+                catch
+                {
+                    System.Diagnostics.Process.Start("IExplore", "https://github.com/RonenNess/GeonBit.UI");
+                }
+            };
             topPanel.AddChild(showGitButton);
 
             // add exit button
@@ -270,6 +280,7 @@ namespace GeonBit.UI.Examples
                 {
                     // create panel and add to list of panels and manager
                     Panel panel = new Panel(new Vector2(520, -1));
+                    panel.Draggable = true;
                     panels.Add(panel);
                     UserInterface.Active.AddEntity(panel);
 
@@ -440,8 +451,8 @@ The most common anchors are 'Auto' and 'AutoInline', which will place entities o
                         panel.AddChild(intPanel);
                     }
                     {
-                        Panel intPanel = new Panel(new Vector2(0, panelHeight), PanelSkin.Golden, Anchor.Auto);
-                        intPanel.AddChild(new Paragraph("Golden Panel", Anchor.Center));
+                        Panel intPanel = new Panel(new Vector2(0, panelHeight), PanelSkin.Alternative, Anchor.Auto);
+                        intPanel.AddChild(new Paragraph("Alternative Panel", Anchor.Center));
                         panel.AddChild(intPanel);
                     }
                     {
@@ -485,7 +496,7 @@ The most common anchors are 'Auto' and 'AutoInline', which will place entities o
                     panel.AddChild(paragraph);
 
                     // internal panel with internal draggable
-                    Panel panelInt = new Panel(new Vector2(250, 250), PanelSkin.Golden, Anchor.AutoCenter);
+                    Panel panelInt = new Panel(new Vector2(250, 250), PanelSkin.Alternative, Anchor.AutoCenter);
                     panelInt.Draggable = true;
                     panelInt.AddChild(new Paragraph("This panel is draggable too, but limited to its parent boundaries.", Anchor.Center, Color.White, 0.85f));
                     panel.AddChild(panelInt);
@@ -637,7 +648,7 @@ The most common anchors are 'Auto' and 'AutoInline', which will place entities o
                     panel.AddChild(new HorizontalLine());
                     panel.AddChild(new Paragraph("Just like panels, SelectList can use alternative skins:"));
 
-                    SelectList list = new SelectList(new Vector2(0, 280), skin: PanelSkin.Golden);
+                    SelectList list = new SelectList(new Vector2(0, 280), skin: PanelSkin.Alternative);
                     list.AddItem("Warrior");
                     list.AddItem("Mage");
                     list.AddItem("Ranger");
@@ -677,11 +688,19 @@ The most common anchors are 'Auto' and 'AutoInline', which will place entities o
                     panel.AddChild(drop);
 
                     panel.AddChild(new Paragraph("And like list, we can set different skins:"));
-                    drop = new DropDown(new Vector2(0, 180), skin: PanelSkin.Golden);
+                    drop = new DropDown(new Vector2(0, 180), skin: PanelSkin.Alternative);
                     drop.AddItem("Warrior");
                     drop.AddItem("Mage");
                     drop.AddItem("Monk");
                     drop.AddItem("Ranger");
+                    panel.AddChild(drop);
+
+                    panel.AddChild(new Paragraph("And per-item styling:"));
+                    drop = new DropDown(new Vector2(0, 180), skin: PanelSkin.Alternative);
+                    drop.AddItem("{{L_RED}}Warrior");
+                    drop.AddItem("{{L_BLUE}}Mage");
+                    drop.AddItem("{{CYAN}}Monk");
+                    drop.AddItem("{{L_GREEN}}Ranger");
                     panel.AddChild(drop);
                 }
 
@@ -766,7 +785,7 @@ Here's a button, to test clicking while scrolled:"));
 
                     // multiline
                     panel.AddChild(new Paragraph("Text input can also be multiline, and use different panel skins:"));
-                    TextInput textMulti = new TextInput(true, new Vector2(0, 220), skin: PanelSkin.Golden);
+                    TextInput textMulti = new TextInput(true, new Vector2(0, 220), skin: PanelSkin.Alternative);
                     textMulti.PlaceholderText = @"Insert multiline text..";
                     panel.AddChild(textMulti);
 
@@ -912,7 +931,7 @@ Maybe something interesting in tab3?"));
                         {
                             Utils.MessageBox.ShowMsgBox("Custom Message!", "In this message there are two custom buttons.\n\nYou can set different actions per button. For example, click on 'Surprise' and see what happens!", new Utils.MessageBox.MsgBoxOption[] {
                                 new Utils.MessageBox.MsgBoxOption("Close", () => { return true; }),
-                                new Utils.MessageBox.MsgBoxOption("Surprise", () => { Utils.MessageBox.ShowMsgBox("Files Removed Successfully", "Win32 was successfully removed from this computer. Please restart to complete OS destruction.\n\n(Just kidding!)"); return true; })
+                                new Utils.MessageBox.MsgBoxOption("Surprise", () => { Utils.MessageBox.ShowMsgBox("Files Removed Successfully", "Win32 was successfully removed from this computer. Please restart to complete OS destruction."); return true; })
                                 });
                         };
                         panel.AddChild(btn);
@@ -990,25 +1009,36 @@ Maybe something interesting in tab3?"));
                     panel.AddChild(new HorizontalLine());
                     panel.AddChild(new Paragraph("GeonBit.UI comes with a utility to generate a classic top menu:"));
 
-                    var layout = new Utils.SimpleFileMenu.MenuLayout();
-                    layout.AddMenu("File", 260);
+                    var layout = new Utils.MenuBar.MenuLayout();
+                    layout.AddMenu("File", 180);
                     layout.AddItemToMenu("File", "New", () => { Utils.MessageBox.ShowMsgBox("Something New!", "Lets make something new."); });
                     layout.AddItemToMenu("File", "Save", () => { Utils.MessageBox.ShowMsgBox("Something Saved!", "Your thing was saved successfully."); });
                     layout.AddItemToMenu("File", "Load", () => { Utils.MessageBox.ShowMsgBox("Something Loaded!", "Your thing was loaded successfully."); });
                     layout.AddItemToMenu("File", "Exit", () => { Utils.MessageBox.ShowMsgBox("Not Yet", "We still have much to see."); });
-                    layout.AddMenu("Display", 260);
+                    layout.AddMenu("Display", 220);
                     layout.AddItemToMenu("Display", "Zoom In", () => { UserInterface.Active.GlobalScale += 0.1f; });
                     layout.AddItemToMenu("Display", "Zoom Out", () => { UserInterface.Active.GlobalScale -= 0.1f; });
                     layout.AddItemToMenu("Display", "Reset Zoom", () => { UserInterface.Active.GlobalScale = 1f; });
-                    var fileMenu = Utils.SimpleFileMenu.Create(layout);
-                    fileMenu.Anchor = Anchor.Auto;
-                    panel.AddChild(fileMenu);
+                    layout.AddMenu("Interactive", 270);
+                    layout.AddItemToMenu("Interactive", "Click Me", (Utils.MenuBar.MenuCallbackContext context) => 
+                    {
+                        context.Entity.ChangeItem(context.ItemIndex, "I was clicked!");
+                    });
+                    layout.AddItemToMenu("Interactive", "Toggle Me", (Utils.MenuBar.MenuCallbackContext context) =>
+                    {
+                        context.Entity.Tag = context.Entity.Tag == "on" ? "off" : "on";
+                        context.Entity.ChangeItem(context.ItemIndex, (context.Entity.Tag == "on" ? "{{L_GREEN}}" : "") + "Toggle Me");
+                    });
+
+                    var menuBar = Utils.MenuBar.Create(layout);
+                    menuBar.Anchor = Anchor.Auto;
+                    panel.AddChild(menuBar);
                     panel.AddChild(new LineSpace(24));
 
-                    panel.AddChild(new Paragraph("Usually this menu should cover the top of the screen and not be inside another panel. Note that like most entities in GeonBit.UI, you can also set its skin:"));
-                    fileMenu = Utils.SimpleFileMenu.Create(layout, PanelSkin.Fancy);
-                    fileMenu.Anchor = Anchor.Auto;
-                    panel.AddChild(fileMenu);
+                    panel.AddChild(new Paragraph("Usually this menu cover the top of the screen and not be inside another panel. Like with most entities in GeonBit.UI, you can also set its skin:"));
+                    menuBar = Utils.MenuBar.Create(layout, PanelSkin.Fancy);
+                    menuBar.Anchor = Anchor.Auto;
+                    panel.AddChild(menuBar);
                 }
 
                 // example: disabled

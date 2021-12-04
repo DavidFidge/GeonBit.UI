@@ -112,7 +112,7 @@ Inside the ```GeonBit.UI/``` folder you will find the following files and folder
 3. ```Libs```: additional libs you need to compile with GeonBit.UI (currently there's only one).
 
 To see GeonBit.UI live before installing it in your project, you can open and run the solution file.
-Please note however that you might need to install some fonts first from ```GeonBit.UI/Content/Fonts/``` folder.
+Please note however that you might need to install some fonts first from ```GeonBit.UI.Examples/Content/Fonts/``` folder.
 
 # Install
 
@@ -131,11 +131,11 @@ Install-Package GeonBit.UI
 Now there are two things to update in the Content Manager:
 
 1. Add a ```Reference``` to the GeonBit.UI.DataTypes.dll lib, located in the nuget package folder.
-2. During installation, GeonBit.UI placed a folder in ```Content\GeonBit.UI```. Add this whole folder, as-is, to your content manager (when asked if to copy or link files, choose link, since the folder is already in its right place).
+2. During installation, GeonBit.UI placed a folder in ```GeonBit.UI.Examples\Content\GeonBit.UI```. Add this whole folder, as-is, to your content manager (when asked if to copy or link files, choose link, since the folder is already in its right place).
 
 That's it! Just few things to remember:
 
-- If you don't have the default themes fonts installed, you need to install the fonts from ```GeonBit.UI/GeonBit.UI/Content/Fonts/```.
+- If you don't have the default themes fonts installed, you need to install the fonts from ```GeonBit.UI.Examples/Content/Fonts/```.
 - If you want to edit the default themes (textures, styles, etc), its recommended to *copy* the theme to a new folder and never change the original package files, since they will be overridden next time you update GeonBit.UI via NuGet.
 - If your development environment is on Linux, there are few more steps to follow: [Installing on Linux](#extra-steps-for-linux).
 
@@ -145,8 +145,8 @@ That's it! Just few things to remember:
 To manually install GeonBit.UI into your project, follow these steps:
 
 1. **Copy source:** Copy the source code from ```GeonBit.UI/GeonBit.UI/``` into your project source root (just copy the whole folder as-is).
-2. **Add content:** Copy all the Content from ```GeonBit.UI/GeonBit.UI/Content/GeonBit.UI/``` into your MonoGame pipeline Manager (can be done by clicking on "add folder" and selecting the GeonBit.UI folder).
-3. **Install fonts:** You might need to install some fonts that GeonBit.UI uses and don't come by default in windows / linux. To do so, go to the ```GeonBit.UI/GeonBit.UI/Content/Fonts/``` folder and install all the fonts there (they are all free to use including for commercial purposes).
+2. **Add content:** Copy all the Content from ```GeonBit.UI.Examples/Content/GeonBit.UI/``` into your MonoGame pipeline Manager (can be done by clicking on "add folder" and selecting the GeonBit.UI folder).
+3. **Install fonts:** You might need to install some fonts that GeonBit.UI uses and don't come by default in windows / linux. To do so, go to the ```GeonBit.UI.Examples/Content/Fonts/``` folder and install all the fonts there (they are all free to use including for commercial purposes).
 4. **Build GeonBit.UI.DataTypes dll:** Due to the way resources compile in MonoGame, there's a need to compile additional dll that contains serializable data types:
  1. Open the project inside ```GeonBit.UI/GeonBit.UI/Libs/```, build it, and add the output dll (```GeonBit.UI.DataTypes.dll```) to your *Content pipeline* ```References``` property and to your *Project Reference* dlls.
  2. You can build only in ```release``` mode, since you'll probably never need to debug it.
@@ -168,7 +168,7 @@ If you ever choose to remove GeonBit.UI from your project, simply follow these s
 
 There are few more things to do if you use Linux:
 
-1. After installing the fonts from ```GeonBit.UI/GeonBit.UI/Content/Fonts/```, you also need to copy the font files into the folder where the spritefont files reside (e.g. ```Content/GeonBit.UI/themes/<team-name>/fonts/```).
+1. After installing the fonts from ```GeonBit.UI.Examples/Content/Fonts/```, you also need to copy the font files into the folder where the spritefont files reside (e.g. ```Content/GeonBit.UI/themes/<team-name>/fonts/```).
 2. Since at this time MonoGame can't build effects on Linux, you need to use a pre-compiled effects. Take the built effects from ```Content/BuiltEffects/``` and put them instead of the ```.fx``` files of your theme (e.g. ```Content/GeonBit.UI/themes/<team-name>/effects/```). Also change their 'Build Action' from 'Build' to 'Copy'.
 
 
@@ -691,9 +691,9 @@ UserInterface.Active.AddEntity(panel);
 Or to create with different skin and advance parameters:
 
 ```cs
-// create a panel at the top-left corner of with 10x10 offset from it, with 'Golden' panel skin.
+// create a panel at the top-left corner of with 10x10 offset from it, with 'Alternative' panel skin.
 // to see more skins check out the PanelSkin enum options or look at the panel examples in the example project.
-Panel panel = new Panel(size: new Vector2(500, 500), skin: PanelSkin.Golden, anchor: Anchor.TopLeft, offset: new Vector2(10, 10));
+Panel panel = new Panel(size: new Vector2(500, 500), skin: PanelSkin.Alternative, anchor: Anchor.TopLeft, offset: new Vector2(10, 10));
 UserInterface.Active.AddEntity(panel);
 ```
 
@@ -782,6 +782,7 @@ To switch styles add a ```{{STYLE_KEY}}``` tag anywhere inside the text, with on
 - GOLD
 - TEAL
 - NAVY
+You can also add "L_" prefix for light, or "D_" prefix for dark.
 
 [change font style instructions]
 - BOLD
@@ -1015,7 +1016,7 @@ Note that the SelectList is made of a panel with paragraphs on it, meaning you c
 To create a SelectList with different skin and advance parameters:
 
 ```cs
-SelectList list = new SelectList(size: new Vector2(0, 200), anchor: Anchor.Center, offset: new Vector2(0, 10), skin: PanelSkin.Golden);
+SelectList list = new SelectList(size: new Vector2(0, 200), anchor: Anchor.Center, offset: new Vector2(0, 10), skin: PanelSkin.Alternative);
 ```
 
 If the list length is too big for the SelectList physical size, a scrollbar will be added automatically.
@@ -1112,7 +1113,7 @@ Note that just like the SelectList, DropDown uses panels as background so you ca
 To create a DropDown with different skin and advance parameters:
 
 ```cs
-DropDown drop = new DropDown(size: new Vector2(0, 200), anchor: Anchor.Center, offset: new Vector2(0, 10), skin: PanelSkin.Golden);
+DropDown drop = new DropDown(size: new Vector2(0, 200), anchor: Anchor.Center, offset: new Vector2(0, 10), skin: PanelSkin.Alternative);
 ```
 
 ### Events
@@ -1465,8 +1466,8 @@ To create a TextInput with different skin and advance parameters:
 
 ```cs
 //
-// create multiline text input with size of 100,220, center anchor, and golden panel skin:
-TextInput multiText = new TextInput(multiline: true, size: new Vector2(100, 220), anchor: Anchor.Center, offset: Vector2.Zero, skin: PanelSkin.Golden);
+// create multiline text input with size of 100,220, center anchor, and Alternative panel skin:
+TextInput multiText = new TextInput(multiline: true, size: new Vector2(100, 220), anchor: Anchor.Center, offset: Vector2.Zero, skin: PanelSkin.Alternative);
 ```
 
 ### Events
@@ -2069,6 +2070,37 @@ For older MonoGame versions, see [tag 2.1.0.0](https://github.com/RonenNess/Geon
 - Separated examples to a different project.
 - Fixed bug with line space and zoom (overflow panel).
 - Fixed bug with wrong slider being changed by mouse wheel after hover.
+
+### 4.0.6.2
+
+- Moved content to examples folder.
+- Fixed post build command failing on new git clone.
+- Renamed 'SimpleFileMenu' to 'SimpleMenuBar'.
+- Added default priority boost to menu bar.
+- Added 'ShowYesNoMsgBox' method.
+- Small internal improvements and optimizations.
+- Added option to load styles from xml files directly (not fully implemented yet, but useable).
+
+### 4.0.7.1
+
+- Added 'ChangeItem()' to list and dropdown.
+- Minor adjustment to dropdown default styling.
+- Adjustment to built-in color instructions.
+- Added API to register callbacks with context to 'MenuBar', making it more interactive.
+- Renamed 'SimpleMenuBar' to just 'MenuBar'.
+- Added 'Tag' to entities.
+- Fixed bug with 'RichParagraph' showing wrong text in 'DropDown' entities when using color instructions.
+- Renamed 'PanelSkin.Golden' to 'PanelSkin.Alternative' so it will be more general and not specific to the original theme.
+
+### 4.1.0.1
+
+- Fixed 'ChangeItem(index, value)' for dropdown entities - accidentally used the by-value override internally before, which change all when have duplicate items.
+- Added 'ChangeValue()' method to all entities.
+- Added 'GetValue()' method to all entities.
+- Changed Button 'Value Changed' event to only emit if value actually changed.
+- Changed CheckBox 'Value Changed' event to only emit if value actually changed.
+- Fixed TextInput 'Value Changed' event to trigger when changing value externally.
+- Fixed offset for draggable panels that are not aligned top-left and visible in first update frame (used to have bug that changed their position to top left).
 
 ## Credits
 
