@@ -216,10 +216,38 @@ namespace GeonBit.UI
         public int ScreenHeight = 0;
 
         /// <summary>Width used for rendering when using a render target.</summary>
-        public int RenderTargetWidth = 0;
+        private int _renderTargetWidth;
+
+        /// <summary>Width used for rendering when using a render target.</summary>
+        public int RenderTargetWidth
+        {
+            get => _renderTargetWidth;
+            set
+            {
+                _renderTargetWidth = value;
+                Root?.MarkAsDirty();
+            }
+        }
 
         /// <summary>Height used for rendering when using a render target.</summary>
-        public int RenderTargetHeight = 0;
+        private int _renderTargetHeight;
+
+        /// <summary>Height used for rendering when using a render target.</summary>
+        public int RenderTargetHeight
+        {
+            get => _renderTargetHeight;
+            set
+            {
+                _renderTargetHeight = value;
+                Root?.MarkAsDirty();
+            }
+        }
+
+        /// <summary>Width used for rendering.</summary>
+        public int RenderWidth => _renderTargetWidth != 0 ? _renderTargetWidth : ScreenWidth;
+
+        /// <summary>Height used for rendering.</summary>
+        public int RenderHeight => _renderTargetHeight != 0 ? _renderTargetHeight : ScreenHeight;
 
         /// <summary>Draw utils helper. Contain general drawing functionality and handle effects replacement.</summary>
         public DrawUtils DrawUtils = null;
@@ -229,6 +257,7 @@ namespace GeonBit.UI
 
         /// <summary>The current target entity, eg what cursor points on. Can be null if cursor don't point on any entity.</summary>
         public Entity TargetEntity { get; private set; }
+
 
         /// <summary>Callback to execute when mouse button is pressed over an entity (called once when button is pressed).</summary>
         public EventCallback OnMouseDown = null;
@@ -648,18 +677,15 @@ namespace GeonBit.UI
             // if using rendering targets
             if (UseRenderTarget)
             {
-                var renderTargetWidth = RenderTargetWidth != 0 ? RenderTargetWidth : ScreenWidth;
-                var renderTargetHeight = RenderTargetHeight != 0 ? RenderTargetHeight : ScreenHeight;
-
                 // check if screen size changed or don't have a render target yet. if so, create the render target.
                 if (_renderTarget == null ||
-                    _renderTarget.Width != renderTargetWidth ||
-                    _renderTarget.Height != renderTargetHeight)
+                    _renderTarget.Width != RenderWidth ||
+                    _renderTarget.Height != RenderHeight)
                 {
                     // recreate render target
                     DisposeRenderTarget();
                     _renderTarget = new RenderTarget2D(spriteBatch.GraphicsDevice,
-                        renderTargetWidth, renderTargetHeight, false,
+                        RenderWidth, RenderHeight, false,
                         spriteBatch.GraphicsDevice.PresentationParameters.BackBufferFormat,
                         spriteBatch.GraphicsDevice.PresentationParameters.DepthStencilFormat, 0,
                         RenderTargetUsage.PreserveContents);
@@ -671,7 +697,7 @@ namespace GeonBit.UI
                     spriteBatch.GraphicsDevice.Clear(Color.Transparent);
                 }
 
-                UpdateRenderTargetToViewportScaling(newScreenWidth, renderTargetWidth, newScreenHeight, renderTargetHeight);
+                UpdateRenderTargetToViewportScaling(newScreenWidth, RenderWidth, newScreenHeight, RenderHeight);
             }
 
             // draw root panel
