@@ -258,7 +258,6 @@ namespace GeonBit.UI
         /// <summary>The current target entity, eg what cursor points on. Can be null if cursor don't point on any entity.</summary>
         public Entity TargetEntity { get; private set; }
 
-
         /// <summary>Callback to execute when mouse button is pressed over an entity (called once when button is pressed).</summary>
         public EventCallback OnMouseDown = null;
 
