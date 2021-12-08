@@ -215,6 +215,12 @@ namespace GeonBit.UI
         /// <summary>Screen height.</summary>
         public int ScreenHeight = 0;
 
+        /// <summary>Width used for rendering when using a render target.</summary>
+        public int RenderTargetWidth = 0;
+
+        /// <summary>Height used for rendering when using a render target.</summary>
+        public int RenderTargetHeight = 0;
+
         /// <summary>Draw utils helper. Contain general drawing functionality and handle effects replacement.</summary>
         public DrawUtils DrawUtils = null;
 
@@ -322,7 +328,9 @@ namespace GeonBit.UI
         /// <summary>
         /// Optional transformation matrix to apply when drawing with render targets.
         /// </summary>
-        public Matrix? RenderTargetTransformMatrix = null;
+        public Matrix RenderTargetTransformMatrix = Matrix.Identity;
+
+        private Matrix _renderTargetToViewportScaling = Matrix.Identity;
 
         /// <summary>
         /// If using render targets, should the curser be rendered inside of it?
@@ -626,10 +634,10 @@ namespace GeonBit.UI
         /// <param name="spriteBatch">SpriteBatch to draw on.</param>
         public void Draw(SpriteBatch spriteBatch)
         {
+            // update screen size
             int newScreenWidth = spriteBatch.GraphicsDevice.Viewport.Width;
             int newScreenHeight = spriteBatch.GraphicsDevice.Viewport.Height;
 
-            // update screen size
             if (ScreenWidth != newScreenWidth || ScreenHeight != newScreenHeight)
             {
                 ScreenWidth = newScreenWidth;
@@ -640,15 +648,18 @@ namespace GeonBit.UI
             // if using rendering targets
             if (UseRenderTarget)
             {
+                var renderTargetWidth = RenderTargetWidth != 0 ? RenderTargetWidth : ScreenWidth;
+                var renderTargetHeight = RenderTargetHeight != 0 ? RenderTargetHeight : ScreenHeight;
+
                 // check if screen size changed or don't have a render target yet. if so, create the render target.
                 if (_renderTarget == null ||
-                    _renderTarget.Width != ScreenWidth ||
-                    _renderTarget.Height != ScreenHeight)
+                    _renderTarget.Width != renderTargetWidth ||
+                    _renderTarget.Height != renderTargetHeight)
                 {
                     // recreate render target
                     DisposeRenderTarget();
                     _renderTarget = new RenderTarget2D(spriteBatch.GraphicsDevice,
-                        ScreenWidth, ScreenHeight, false,
+                        renderTargetWidth, renderTargetHeight, false,
                         spriteBatch.GraphicsDevice.PresentationParameters.BackBufferFormat,
                         spriteBatch.GraphicsDevice.PresentationParameters.DepthStencilFormat, 0,
                         RenderTargetUsage.PreserveContents);
@@ -659,6 +670,8 @@ namespace GeonBit.UI
                     spriteBatch.GraphicsDevice.SetRenderTarget(_renderTarget);
                     spriteBatch.GraphicsDevice.Clear(Color.Transparent);
                 }
+
+                UpdateRenderTargetToViewportScaling(newScreenWidth, renderTargetWidth, newScreenHeight, renderTargetHeight);
             }
 
             // draw root panel
@@ -677,6 +690,23 @@ namespace GeonBit.UI
             }
         }
 
+        private void UpdateRenderTargetToViewportScaling(
+            int screenWidth,
+            int renderTargetWidth,
+            int screenHeight,
+            int renderTargetHeight)
+        {
+            _renderTargetToViewportScaling = Matrix.Identity;
+
+            if ((screenWidth != renderTargetWidth || screenHeight != renderTargetHeight) &&
+                renderTargetWidth != 0 &&
+                renderTargetHeight != 0)
+            {
+                _renderTargetToViewportScaling =
+                    Matrix.CreateScale((float)renderTargetWidth / screenWidth, (float)renderTargetHeight / screenHeight, 1f);
+            }
+        }
+
         /// <summary>
         /// Finalize the draw frame and draw all the UI on screen.
         /// This function only works if we are in UseRenderTarget mode.
@@ -684,12 +714,15 @@ namespace GeonBit.UI
         /// <param name="spriteBatch">Sprite batch to draw on.</param>
         public void DrawMainRenderTarget(SpriteBatch spriteBatch)
         {
+            var viewportWidth = spriteBatch.GraphicsDevice.Viewport.Width;
+            var viewportHeight = spriteBatch.GraphicsDevice.Viewport.Height;
+
             // draw the main render target
             if (RenderTarget != null && !RenderTarget.IsDisposed)
             {
                 // draw render target
                 spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, transformMatrix: RenderTargetTransformMatrix);
-                spriteBatch.Draw(RenderTarget, new Rectangle(0, 0, ScreenWidth, ScreenHeight), Color.White);
+                spriteBatch.Draw(RenderTarget, new Rectangle(0, 0, viewportWidth, viewportHeight), Color.White);
                 spriteBatch.End();
             }
 
@@ -712,10 +745,18 @@ namespace GeonBit.UI
             addVector = addVector ?? Vector2.Zero;
 
             // return transformed cursor position
-            if (UseRenderTarget && RenderTargetTransformMatrix != null && !IncludeCursorInRenderTarget)
+            if (UseRenderTarget)
             {
-                var matrix = Matrix.Invert(RenderTargetTransformMatrix.Value);
-                return MouseInputProvider.TransformMousePosition(matrix) + Vector2.Transform(addVector.Value, matrix);
+                var renderTargetTransform = _renderTargetToViewportScaling;
+
+                if (!IncludeCursorInRenderTarget)
+                {
+                    var renderTargetTransformMatrixInverted = Matrix.Invert(RenderTargetTransformMatrix);
+
+                    renderTargetTransform = Matrix.Multiply(renderTargetTransformMatrixInverted, renderTargetTransform);
+                }
+
+                return MouseInputProvider.TransformMousePosition(renderTargetTransform) + Vector2.Transform(addVector.Value, renderTargetTransform);
             }
 
             // return raw cursor pos
