@@ -356,7 +356,7 @@ namespace GeonBit.UI
         /// <summary>
         /// Optional transformation matrix to apply when drawing with render targets.
         /// </summary>
-        public Matrix RenderTargetTransformMatrix = Matrix.Identity;
+        public Matrix? RenderTargetTransformMatrix = Matrix.Identity;
 
         private Matrix _renderTargetToViewportScaling = Matrix.Identity;
 
@@ -776,7 +776,7 @@ namespace GeonBit.UI
 
                 if (!IncludeCursorInRenderTarget)
                 {
-                    var renderTargetTransformMatrixInverted = Matrix.Invert(RenderTargetTransformMatrix);
+                    var renderTargetTransformMatrixInverted = Matrix.Invert(RenderTargetTransformMatrix ?? Matrix.Identity);
 
                     renderTargetTransform = Matrix.Multiply(renderTargetTransformMatrixInverted, renderTargetTransform);
                 }
