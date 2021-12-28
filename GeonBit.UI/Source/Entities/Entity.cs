@@ -561,10 +561,11 @@ namespace GeonBit.UI.Entities
         /// Get current mouse position.
         /// </summary>
         /// <param name="addVector">Optional vector to add to cursor position.</param>
+        /// <param name="transformAddVector"></param>
         /// <returns>Mouse position.</returns>
-        protected Vector2 GetMousePos(Vector2? addVector = null)
+        protected Vector2 GetMousePos(Vector2? addVector = null, bool transformAddVector = false)
         {
-            return UserInterface.Active.GetTransformedCursorPos(addVector);
+            return UserInterface.Active.GetTransformedCursorPos(addVector, transformAddVector);
         }
 
         /// <summary>

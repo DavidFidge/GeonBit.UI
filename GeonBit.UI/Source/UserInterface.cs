@@ -764,7 +764,7 @@ namespace GeonBit.UI
         /// If don't use transform matrix or drawing cursor outside, will not transform cursor position.
         /// </summary>
         /// <returns>Transformed cursor position.</returns>
-        public Vector2 GetTransformedCursorPos(Vector2? addVector)
+        public Vector2 GetTransformedCursorPos(Vector2? addVector, bool transformAddVector = false)
         {
             // default add vector
             addVector = addVector ?? Vector2.Zero;
@@ -781,7 +781,10 @@ namespace GeonBit.UI
                     renderTargetTransform = Matrix.Multiply(renderTargetTransformMatrixInverted, renderTargetTransform);
                 }
 
-                return MouseInputProvider.TransformMousePosition(renderTargetTransform) + Vector2.Transform(addVector.Value, renderTargetTransform);
+                if (transformAddVector)
+                    addVector = Vector2.Transform(addVector.Value, renderTargetTransform);
+
+                return MouseInputProvider.TransformMousePosition(renderTargetTransform) + addVector.Value;
             }
 
             // return raw cursor pos

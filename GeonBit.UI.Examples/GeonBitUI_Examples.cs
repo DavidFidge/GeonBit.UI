@@ -67,7 +67,7 @@ namespace GeonBit.UI.Examples
             // init graphics device manager and set content root
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            Window.IsBorderless = true;
+            Window.IsBorderless = false;
         }
 
         /// <summary>
