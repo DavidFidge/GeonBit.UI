@@ -6,10 +6,13 @@
 // Since: 2016.
 //-----------------------------------------------------------------------------
 #endregion
+
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using GeonBit.UI.Entities.TextValidators;
+using Microsoft.Xna.Framework.Input;
 
 namespace GeonBit.UI.Entities
 {
@@ -20,6 +23,17 @@ namespace GeonBit.UI.Entities
     [System.Serializable]
     public class TextInput : PanelBase
     {
+        private HashSet<SpecialChars> _disabledSpecialChars = new HashSet<SpecialChars>();
+
+        /// <summary>
+        /// Allows you to disable special keys on the text input.
+        /// </summary>
+        /// <param name="key"></param>
+        public void AddDisabledSpecialChar(SpecialChars key)
+        {
+            _disabledSpecialChars.Add(key);
+        }
+
         /// <summary>
         /// Static ctor.
         /// </summary>
@@ -597,7 +611,7 @@ namespace GeonBit.UI.Entities
 
                 // store old string and update based on user input
                 string oldVal = _value;
-                _value = KeyboardInput.GetTextInput(_value, TextParagraph.MaxCharactersInLine, ref pos);
+                _value = KeyboardInput.GetTextInput(_value, TextParagraph.MaxCharactersInLine, ref pos, _disabledSpecialChars);
 
                 // update caret position
                 _caret = pos;

@@ -9,6 +9,8 @@
 // Since: 2018.
 //-----------------------------------------------------------------------------
 #endregion
+
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 
@@ -18,16 +20,40 @@ namespace GeonBit.UI
     /// Some special characters input.
     /// Note: enum values are based on ascii table values for these special characters.
     /// </summary>
-    enum SpecialChars
+    public enum SpecialChars
     {
-        Null = 0,           // no character input
-        Delete = 127,       // delete char
-        Backspace = 8,      // backspace char
-        Space = 32,         // space character input
-        ArrowLeft = 1,      // arrow left - moving caret left
-        ArrowRight = 2,     // arrow right - moving caret right
-        ArrowUp = 3,        // arrow up - moving caret line up
-        ArrowDown = 4,      // arrow down - moving caret line down
+        /// <summary>
+        /// no character input
+        /// </summary>
+        Null = 0,
+        /// <summary>
+        /// delete char
+        /// </summary>
+        Delete = 127,
+        /// <summary>
+        /// backspace char
+        /// </summary>
+        Backspace = 8,
+        /// <summary>
+        /// space character input
+        /// </summary>
+        Space = 32,
+        /// <summary>
+        /// arrow left - moving caret left
+        /// </summary>
+        ArrowLeft = 1,
+        /// <summary>
+        /// arrow right - moving caret right
+        /// </summary>
+        ArrowRight = 2,
+        /// <summary>
+        /// arrow up - moving caret line up
+        /// </summary>
+        ArrowUp = 3,
+        /// <summary>
+        /// arrow down - moving caret line down
+        /// </summary>
+        ArrowDown = 4
     };
 
     /// <summary>
@@ -49,7 +75,8 @@ namespace GeonBit.UI
         /// <param name="txt">String to push text input into.</param>
         /// <param name="lineWidth">How many characters can fit in a line.</param>
         /// <param name="pos">Position to insert / remove characters. -1 to push at the end of string. After done, will contain actual new caret position.</param>
+        /// <param name="disabledSpecialChars">disabled special characters</param>
         /// <returns>String after text input applied on it.</returns>
-        string GetTextInput(string txt, int lineWidth, ref int pos);
+        string GetTextInput(string txt, int lineWidth, ref int pos, IEnumerable<SpecialChars> disabledSpecialChars = null);
     }
 }

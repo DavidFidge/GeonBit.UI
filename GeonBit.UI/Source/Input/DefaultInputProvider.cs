@@ -7,6 +7,9 @@
 // Since: 2016.
 //-----------------------------------------------------------------------------
 #endregion
+
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -416,8 +419,9 @@ namespace GeonBit.UI
         /// <param name="txt">String to push text input into.</param>
         /// <param name="lineWidth">How many characters can fit in a line.</param>
         /// <param name="pos">Position to insert / remove characters. -1 to push at the end of string. After done, will contain actual new caret position.</param>
+        /// <param name="disabledSpecialChars">Special characters to ignore when processing text input</param>
         /// <returns>String after text input applied on it.</returns>
-        public string GetTextInput(string txt, int lineWidth, ref int pos)
+        public string GetTextInput(string txt, int lineWidth, ref int pos, IEnumerable<SpecialChars> disabledSpecialChars = null)
         {
             // if need to skip due to cooldown time
             if (!_newKeyIsPressed && _keyboardInputCooldown > 0f)
@@ -436,6 +440,9 @@ namespace GeonBit.UI
             {
                 pos = txt.Length;
             }
+
+            if (disabledSpecialChars != null && disabledSpecialChars.Contains((SpecialChars)_currCharacterInput))
+                return txt;
 
             // handle special chars
             switch (_currCharacterInput)
