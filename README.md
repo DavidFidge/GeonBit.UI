@@ -1,12 +1,6 @@
-![GeonBit.UI](assets/img/GeonBitUI-sm.png "GeonBit.UI")
-
 # GeonBit.UI
 
-UI extension for MonoGame-based projects by Ronen Ness.
-
-Get it from: [GeonBit.UI git](https://github.com/RonenNess/GeonBit.UI).
-
-Full API documentation available here: [Online docs](https://ronenness.github.io/GeonBit.UI-docs/).
+UI extension for MonoGame-based projects by Ronen Ness, original project location: [GeonBit.UI git](https://github.com/RonenNess/GeonBit.UI).
 
 ## What is this fork
 
