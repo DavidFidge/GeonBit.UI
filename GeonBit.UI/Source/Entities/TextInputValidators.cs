@@ -131,6 +131,79 @@ namespace GeonBit.UI.Entities.TextValidators
     }
 
     /// <summary>
+    /// Make sure input is numeric and optionally validate min / max values.
+    /// </summary>
+    [System.Serializable]
+    public class TextValidatorULongNumbersOnly : ITextValidator
+    {
+        /// <summary>
+        /// Static ctor.
+        /// </summary>
+        static TextValidatorULongNumbersOnly()
+        {
+            Entity.MakeSerializable(typeof(TextValidatorULongNumbersOnly));
+        }
+
+        /// <summary>
+        /// Optional min value.
+        /// </summary>
+        public ulong? Min;
+
+        /// <summary>
+        /// Optional max value.
+        /// </summary>
+        public ulong? Max;
+
+        /// <summary>
+        /// Create the number validator.
+        /// </summary>
+        /// <param name="min">If provided, will force min value.</param>
+        /// <param name="max">If provided, will force max value.</param>
+        public TextValidatorULongNumbersOnly(ulong? min = null, ulong? max = null)
+        {
+            Min = min;
+            Max = max;
+        }
+
+        /// <summary>
+        /// Create number validator with default params.
+        /// </summary>
+        public TextValidatorULongNumbersOnly() : this(ulong.MinValue, ulong.MaxValue)
+        {
+        }
+
+        /// <summary>
+        /// Return true if text input is a valid number.
+        /// </summary>
+        /// <param name="text">New text input value.</param>
+        /// <param name="oldText">Previous text input value.</param>
+        /// <returns>If TextInput value is legal.</returns>
+        public override bool ValidateText(ref string text, string oldText)
+        {
+            // if string empty return true
+            if (text.Length == 0)
+            {
+                return true;
+            }
+
+            // will contain value as number
+            ulong num;
+
+            if (!ulong.TryParse(text, out num))
+            {
+                return false;
+            }
+
+            // validate range
+            if (Min != null && num < Min) { text = Min.ToString(); }
+            if (Max != null && num > Max) { text = Max.ToString(); }
+
+            // valid number input
+            return true;
+        }
+    }
+
+    /// <summary>
     /// Make sure input contains only english characters.
     /// </summary>
     [System.Serializable]
