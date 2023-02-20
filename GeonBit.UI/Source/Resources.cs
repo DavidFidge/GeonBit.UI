@@ -43,22 +43,20 @@ namespace GeonBit.UI
                 int indx = GetIndex(i);
                 if (_loadedTextures[indx] == null)
                 {
-                    var path = $"{Resources._root}{_basepath}{EnumToString(i)}{_suffix}";
                     try
                     {
-                        _loadedTextures[indx] = Resources._content.Load<Texture2D>(path);
+                        _loadedTextures[indx] = Resources._content.Load<Texture2D>($"{Resources._root}{_basepath}{EnumToString(i)}{_suffix}");
                     }
-                    catch (Microsoft.Xna.Framework.Content.ContentLoadException)
+                    catch (Microsoft.Xna.Framework.Content.ContentLoadException ex)
                     {
-                        // for backward compatibility when alternative was called 'golden'
-                        if (i.ToString() == PanelSkin.Alternative.ToString())
+                        try
                         {
-                            path = $"{Resources._root}{_basepath}golden{_suffix}";
-                            _loadedTextures[indx] = Resources._content.Load<Texture2D>(path);
+                            _loadedTextures[indx] = Resources._content.Load<Texture2D>($"{Resources._root}{_basepath}default{_suffix}");
                         }
-                        else
+                        catch (Microsoft.Xna.Framework.Content.ContentLoadException)
                         {
-                            throw;
+                            throw new Exception(
+                                $"Could not load texture {Resources._root}{_basepath}{EnumToString(i)}{_suffix} or fallback to {Resources._root}{_basepath}default{_suffix}", ex);
                         }
                     }
                 }
@@ -317,18 +315,18 @@ namespace GeonBit.UI
                 string skinName = skin.ToString().ToLowerInvariant();
                 try
                 {
-                    PanelData[(int)skin] = content.Load<TextureData>(_root + "textures/panel_" + skinName + "_md");
+                    PanelData[(int)skin] = content.Load<TextureData>($"{_root}textures/panel_{skinName}_md");
                 }
                 catch (Microsoft.Xna.Framework.Content.ContentLoadException ex)
                 {
-                    // for backwards compatability from when it was called 'Golden'.
-                    if (skin == PanelSkin.Alternative)
+                    // Fall back to "Default" if the skin does not exist
+                    try
                     {
-                        PanelData[(int)skin] = content.Load<TextureData>(_root + "textures/panel_golden_md");
+                        PanelData[(int)skin] = content.Load<TextureData>($"{_root}textures/panel_default_md");
                     }
-                    else
+                    catch (Microsoft.Xna.Framework.Content.ContentLoadException)
                     {
-                        throw ex;
+                        throw new Exception($"Could not load {_root}textures/panel_{skinName}_md and could not fall back to {_root}textures/panel_default_md", ex);
                     }
                 }
             }
@@ -341,7 +339,24 @@ namespace GeonBit.UI
             foreach (SliderSkin skin in Enum.GetValues(typeof(SliderSkin)))
             {
                 string skinName = skin.ToString().ToLowerInvariant();
-                SliderData[(int)skin] = content.Load<TextureData>(_root + "textures/slider_" + skinName + "_md");
+                try
+                {
+                    SliderData[(int)skin] = content.Load<TextureData>($"{_root}textures/slider_{skinName}_md");
+                }
+                catch (Microsoft.Xna.Framework.Content.ContentLoadException ex)
+                {
+                    try
+                    {
+                        SliderData[(int)skin] =
+                            content.Load<TextureData>($"{_root}textures/slider_default_md");
+                    }
+                    catch (Microsoft.Xna.Framework.Content.ContentLoadException)
+                    {
+                        throw new Exception(
+                            $"Could not load {_root}textures/slider_{skinName}_md and could not fall back to {_root}textures/slider_default_md",
+                            ex);
+                    }
+                }
             }
 
             // load fonts
@@ -357,7 +372,24 @@ namespace GeonBit.UI
             foreach (ButtonSkin skin in Enum.GetValues(typeof(ButtonSkin)))
             {
                 string skinName = skin.ToString().ToLowerInvariant();
-                ButtonData[(int)skin] = content.Load<TextureData>(_root + "textures/button_" + skinName + "_md");
+                
+                try
+                {
+                    ButtonData[(int)skin] = content.Load<TextureData>($"{_root}textures/button_{skinName}_md");
+                }
+                catch (Microsoft.Xna.Framework.Content.ContentLoadException ex)
+                {
+                    try
+                    {
+                        ButtonData[(int)skin] = content.Load<TextureData>($"{_root}textures/button_default_md");
+                    }
+                    catch (Microsoft.Xna.Framework.Content.ContentLoadException)
+                    {
+                        throw new Exception(
+                            $"Could not load {_root}textures/button_{skinName}_md and could not fall back to {_root}textures/button_default_md",
+                            ex);
+                    }
+                }                
             }
 
             // load progress bar metadata
@@ -449,6 +481,7 @@ namespace GeonBit.UI
                         OnUnknownNode = (object sender, XmlNodeEventArgs e) => { throw new System.Exception("Error parsing file '" + fullPath + "': invalid element '" + e.Name + "' at line " + e.LineNumber); },
                         OnUnreferencedObject = (object sender, UnreferencedObjectEventArgs e) => { throw new System.Exception("Error parsing file '" + fullPath + "': unreferenced object '" + e.UnreferencedObject.ToString() + "'"); },
                     };
+                    
                     return (DefaultStyles)serializer.Deserialize(System.Xml.XmlReader.Create(reader), eventsHandler);
                 }
             }
