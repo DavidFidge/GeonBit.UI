@@ -94,6 +94,7 @@ namespace GeonBit.UI.Entities
             {
                 // create and set button paragraph
                 ButtonParagraph = UserInterface.DefaultParagraph(text, Anchor.Center);
+                ButtonParagraph.WrapWords = false;
                 ButtonParagraph._hiddenInternalEntity = true;
                 ButtonParagraph.UpdateStyle(DefaultParagraphStyle);
                 ButtonParagraph.Identifier = "_button_caption";
