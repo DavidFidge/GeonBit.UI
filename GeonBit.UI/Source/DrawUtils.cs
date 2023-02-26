@@ -120,6 +120,9 @@ namespace GeonBit.UI
         /// <param name="sourceRect">Optional source rectangle to use.</param>
         public virtual void DrawImage(SpriteBatch spriteBatch, Texture2D texture, Rectangle destination, Color? color = null, float scale = 1f, Rectangle? sourceRect = null)
         {
+            if (texture == null)
+                return;
+
             // default color
             color = FixColorOpacity(color);
 
