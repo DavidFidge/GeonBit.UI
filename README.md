@@ -1,3 +1,12 @@
+![Israel](assets/img/We_stand_with_Israel.jpg "Israel")
+
+Israel is under a brutal attack from Gaza on multiple fronts. 
+Hundreds of innocent civilians were murdered and kidnapped from their own homes. Hundreds are still missing.
+
+I won't share any gore or horrific photos here. But know things are very bad right now. Here's [a short video that summarize the situation](https://www.youtube.com/watch?v=NCUsb621ELE).
+
+Please support Israel in these dark times.
+
 ![GeonBit.UI](assets/img/GeonBitUI-sm.png "GeonBit.UI")
 
 # GeonBit.UI
@@ -44,7 +53,7 @@ GeonBit.UI provide the following functionality:
 - Text boxes for user text input - support multiline, word-wrap, scrollbars and skins.
 - PanelTabs to easily create multitab panels.
 - Tooltip text.
-- Message Boxes.
+- Message Boxes and file dialogs.
 - Stylesheets and themes, easily extendable.
 - Locked, disabled, shadow, and other basic UI effects and states.
 - Global scaling property to support different screen sizes.
@@ -75,94 +84,43 @@ Will create the following UI panel at the center of the screen:
 
 ![UI example1](assets/img/example1.png "example1")
 
-## Caveats
-
-Before choosing GeonBit.UI, here are few caveats you should know about:
-
-#### Only tested on windows
-
-GeonBit.UI was developed and tested on 3 different machines, with windows 8 and 10.
-Theoretically It should work on any platform supported by MonoGame, but it might require some tweaks for some devices.
-
-#### Text Input is pretty basic.
-
-The text input widget is pretty basic and don't support advance text editing and things like copy & paste, selection, etc.
-So if your project require extensive text editing you might need to do some work on the text input widget.
-
-#### Rely on mouse / touch input
-
-GeonBit.UI is built to work with mouse / touch screens. It is currently not designed for keyboard-only / joystick input (e.g. it doesn't support tab navigating etc.)
-
-Note: supporting touch input requires some implementation from your side. More about this in 'Input Providers'.
-
-## Git structure
-
-![repo folders](assets/img/geonbit_folders.png "repo folders")
-
-In the repository root you will find the following files and folders:
-
-1. ```GeonBit.UI.sln```: a Visual Studio solution with GeonBit.UI source + example code.
-2. ```Documentation.chm```: full API documentation file (auto-generated).
-3. ```GeonBit.UI/```: folder containing all the source code and resources of GeonBit.UI.
-
-Inside the ```GeonBit.UI/``` folder you will find the following files and folders:
-
-1. ```Content```: all the resources GeonBit.UI rely on. You will need to import some of it (explained in installation instructions coming up next).
-2. ```GeonBit.UI```: GeonBit.UI source code (cs files).
-3. ```Libs```: additional libs you need to compile with GeonBit.UI (currently there's only one).
-
-To see GeonBit.UI live before installing it in your project, you can open and run the solution file.
-Please note however that you might need to install some fonts first from ```GeonBit.UI.Examples/Content/Fonts/``` folder.
 
 # Install
-
-Note: GeonBit.UI require MonoGame 3.6 or higher to run. For older MonoGame versions, please see [tag 2.1.0.0](https://github.com/RonenNess/GeonBit.UI/releases/tag/2.1.0.0).
 
 You can either install GeonBit.UI with NuGet or manually.
 
 ## Via NuGet
 
-First, run the NuGet install command:
+
+First run the NuGet install command:
 
 ```
 Install-Package GeonBit.UI
 ```
 
-Now there are two things to update in the Content Manager:
+Now to get the built-in UI themes, copy the GeonBit.UI content files from *GeonBit.UI NuGet package folder* (content files will be under ```\content\Content```) and put these files under your own project, so you should have a folder like this in your content: `Content\GeonBit.UI\Themes\<theme>`.
 
-1. Add a ```Reference``` to the GeonBit.UI.DataTypes.dll lib, located in the nuget package folder.
-2. During installation, GeonBit.UI placed a folder in ```GeonBit.UI.Examples\Content\GeonBit.UI```. Add this whole folder, as-is, to your content manager (when asked if to copy or link files, choose link, since the folder is already in its right place).
+The **GeonBit.UI NuGet package folder** is usually found the following path: ```%userprofile%\.nuget\packages\geonbit.ui\```, be sure to pick the correct version if you have multiple versions installed.
+
+Now you just need to add all the UI content files to your `Content.mgcb`, just **be sure to mark all XML files with 'Copy' action, and not 'Build'**.
+
+To save time keep in mind that the content manager is just a text-based file, so you can copy the date from [here](https://github.com/RonenNess/GeonBit.UI/blob/master/GeonBit.UI/Content/Content.mgcb).
 
 That's it! Just few things to remember:
 
-- If you don't have the default themes fonts installed, you need to install the fonts from ```GeonBit.UI.Examples/Content/Fonts/```.
-- If you want to edit the default themes (textures, styles, etc), its recommended to *copy* the theme to a new folder and never change the original package files, since they will be overridden next time you update GeonBit.UI via NuGet.
+- If you don't have the default themes fonts installed, you need to install the fonts from ```Content/Fonts/``` on your computer.
 - If your development environment is on Linux, there are few more steps to follow: [Installing on Linux](#extra-steps-for-linux).
 
 
 ## Manual Install
 
-To manually install GeonBit.UI into your project, follow these steps:
+Manually installing GeonBit.UI might actually be easier than using the NuGet (but harder to update):
 
-1. **Copy source:** Copy the source code from ```GeonBit.UI/GeonBit.UI/``` into your project source root (just copy the whole folder as-is).
-2. **Add content:** Copy all the Content from ```GeonBit.UI.Examples/Content/GeonBit.UI/``` into your MonoGame pipeline Manager (can be done by clicking on "add folder" and selecting the GeonBit.UI folder).
-3. **Install fonts:** You might need to install some fonts that GeonBit.UI uses and don't come by default in windows / linux. To do so, go to the ```GeonBit.UI.Examples/Content/Fonts/``` folder and install all the fonts there (they are all free to use including for commercial purposes).
-4. **Build GeonBit.UI.DataTypes dll:** Due to the way resources compile in MonoGame, there's a need to compile additional dll that contains serializable data types:
- 1. Open the project inside ```GeonBit.UI/GeonBit.UI/Libs/```, build it, and add the output dll (```GeonBit.UI.DataTypes.dll```) to your *Content pipeline* ```References``` property and to your *Project Reference* dlls.
- 2. You can build only in ```release``` mode, since you'll probably never need to debug it.
- 3. You can use the example ```GeonBit.UI.sln``` solution to quickly build it without opening a new solution file.
+1. **Copy source project:** Copy the entire project from [GeonBit.UI/GeonBit.UI/](https://github.com/RonenNess/GeonBit.UI/tree/master/GeonBit.UI) into your own solution, including the content files and source.
+2. **Build project:** Make sure project build successfully.
+3. **Install fonts:** You might need to install some fonts that GeonBit.UI uses and don't come by default in windows / linux. To do so, go to the ```GeonBit.UI/Content/Fonts``` folder and install all the fonts there (they are all free to use including for commercial purposes).
+4. **Add reference to your project:** Add a reference from your main project the GeonBit.UI. This should be enough to start using it (this is how the [GeonBit.UI.Examples](https://github.com/RonenNess/GeonBit.UI/tree/master/GeonBit.UI.Examples) project works, so you can check it out).
 
-That's it. You should now be able to compile and use GeonBit.UI in your projects.
-
-To see a 5-minutes video tutorial illustrating the process, check out this YouTube video:
-
-[![GeonBit.UI Install](http://img.youtube.com/vi/dt3URcN45XM/0.jpg)](http://www.youtube.com/watch?v=dt3URcN45XM "GeonBit.UI Install")
-
-If you ever choose to remove GeonBit.UI from your project, simply follow these steps:
-
-1. Delete the ```GeonBit.UI``` content folder from your content pipeline.
-2. Delete the ```GeonBit.UI``` source folder from your solution / project source code.
-3. Remove the ```References``` to the DataTypes dll from the pipeline manager and your project.
 
 ## Extra steps for Linux
 
@@ -2101,6 +2059,48 @@ For older MonoGame versions, see [tag 2.1.0.0](https://github.com/RonenNess/Geon
 - Changed CheckBox 'Value Changed' event to only emit if value actually changed.
 - Fixed TextInput 'Value Changed' event to trigger when changing value externally.
 - Fixed offset for draggable panels that are not aligned top-left and visible in first update frame (used to have bug that changed their position to top left).
+
+### 4.2.0.0
+
+- Updated project to .Net 6.
+- Updated MonoGame packages to latest.
+- Changed 'Resources' class from static to a singleton.
+- Added support in theme switching (requires re-initialize of UI thought).
+- Changed projects structure to make more sense.
+- Removed hard-coded extra line spacing to all fonts - an old, bad practice, relic.
+
+### 4.2.1.0
+
+- Added StyleSheet file for DropDown Selected Panel, so you can now customize the panel behind the dropdown selected text via stylesheets.
+- - In addition, renamed 'DropDown.SelectedPanelHeight' to 'DropDown.DefaultSelectedTextPanelHeight', and this property will only be used if 'DropDownSelectedPanel' stylesheet is missing, or define default height to 1 or 0. 
+- Removed compile warnings by adding defaults and `= null!`.
+- Changed Slider and Progress bar Min and Max properties to support negative numbers. Now sliders can go negative!
+- Fixed typos.
+- Added option to create Image from path.
+- Improved Message Boxes utility, and added Buttons list to message box handle.
+- Added built-in files dialog (save / load file).
+- Renamed and rearranged text validators + added file name validator.
+- Added icons support to Lists and Drop Down entities.
+- Added 'OnSameValueSelected' event to lists.
+
+### 4.2.1.1
+
+- Removed accidental constant offset for list icons, and made it based on padding + configurable.
+- Fixed lists text offset from icon to be with the offset property and not by adding spaces, which is less reliable.
+
+IMPORTANT MIGRATION NOTICE!
+If you want to use the new files dialog, you must include the new textures that were added to theme: `textures/file_icon.png` and `textures/folder_icon.png`.
+
+### 4.3.0.0
+
+- Removed the XNA XMLs for stylesheets, and switched to regular XML files. Trying to use the content manager for XML was a pure nightmare and added zero value.
+- Removed the data types project. The entire package is now a single project + another project for demos.
+- Fixed files dialog to show folders if can pick them, even if can't change root folder.
+- Fixed background offset bug in selected list item with icon.
+
+### 4.3.0.1
+
+- Added rotation to paragraphs.
 
 ## Credits
 

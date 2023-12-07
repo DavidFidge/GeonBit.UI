@@ -59,6 +59,9 @@ namespace GeonBit.UI.Examples
         // current example shown
         int currExample = 0;
 
+        // current theme
+        BuiltinThemes _currTheme;
+
         /// <summary>
         /// Create the game instance.
         /// </summary>
@@ -74,17 +77,7 @@ namespace GeonBit.UI.Examples
         /// Initialize the main application.
         /// </summary>
         protected override void Initialize()
-        {         
-            // create and init the UI manager
-            UserInterface.Initialize(Content, BuiltinThemes.hd);
-            UserInterface.Active.UseRenderTarget = true;
-
-            // draw cursor outside the render target
-            UserInterface.Active.IncludeCursorInRenderTarget = false;
-
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-
+        {
             // make the window fullscreen (but still with border and top control bar)
             int _ScreenWidth = graphics.GraphicsDevice.Adapter.CurrentDisplayMode.Width;
             int _ScreenHeight = graphics.GraphicsDevice.Adapter.CurrentDisplayMode.Height;
@@ -92,6 +85,28 @@ namespace GeonBit.UI.Examples
             graphics.PreferredBackBufferHeight = (int)_ScreenHeight;
             graphics.IsFullScreen = false;
             graphics.ApplyChanges();
+
+            // init theme and ui
+            InitializeThemeAndUI(BuiltinThemes.hd);
+        }
+
+        private void InitializeThemeAndUI(BuiltinThemes theme)
+        {
+            // clear previous panels
+            panels.Clear();
+
+            // store current theme
+            _currTheme = theme;
+
+            // create and init the UI manager
+            UserInterface.Initialize(Content, theme);
+            UserInterface.Active.UseRenderTarget = true;
+
+            // draw cursor outside the render target
+            UserInterface.Active.IncludeCursorInRenderTarget = false;
+
+            // Create a new SpriteBatch, which can be used to draw textures.
+            spriteBatch = spriteBatch ?? new SpriteBatch(GraphicsDevice);
 
             // init ui and examples
             InitExamplesAndUI();
@@ -203,7 +218,9 @@ namespace GeonBit.UI.Examples
             eventsNow.MaxItems = 4;
 
             // add extra info button
-            Button infoBtn = new Button("  Events", anchor: Anchor.BottomLeft, size: new Vector2(280, -1), offset: new Vector2(140, 0));
+            var offsetX = 140;
+            Button infoBtn = new Button("  Events", anchor: Anchor.BottomLeft, size: new Vector2(280, -1), offset: new Vector2(offsetX, 0));
+            offsetX += 280;
             infoBtn.AddChild(new Icon(IconType.Scroll, Anchor.CenterLeft), true);
             infoBtn.OnClick = (Entity entity) =>
             {
@@ -214,7 +231,8 @@ namespace GeonBit.UI.Examples
             UserInterface.Active.AddEntity(infoBtn);
 
             // add button to apply transformations
-            Button transBtn = new Button("Transform UI", anchor: Anchor.BottomLeft, size: new Vector2(320, -1), offset: new Vector2(140 + 280, 0));
+            Button transBtn = new Button("Transform UI", anchor: Anchor.BottomLeft, size: new Vector2(290, -1), offset: new Vector2(offsetX, 0));
+            offsetX += 290;
             transBtn.OnClick = (Entity entity) =>
             {
                 if (UserInterface.Active.RenderTargetTransformMatrix == null)
@@ -233,7 +251,8 @@ namespace GeonBit.UI.Examples
             UserInterface.Active.AddEntity(transBtn);
 
             // add button to enable debug mode
-            Button debugBtn = new Button("Debug Mode", anchor: Anchor.BottomLeft, size: new Vector2(300, -1), offset: new Vector2(140 + 280 + 320, 0));
+            Button debugBtn = new Button("Debug Mode", anchor: Anchor.BottomLeft, size: new Vector2(260, -1), offset: new Vector2(offsetX, 0));
+            offsetX += 260;
             debugBtn.OnClick = (Entity entity) =>
             {
                 UserInterface.Active.DebugDraw = !UserInterface.Active.DebugDraw;
@@ -241,6 +260,21 @@ namespace GeonBit.UI.Examples
             debugBtn.ToggleMode = true;
             debugBtn.ToolTipText = "Enable special debug drawing mode.";
             UserInterface.Active.AddEntity(debugBtn);
+
+            // add button to rptate theme debug mode
+            Button changeThemeBtn = new Button("Change Theme", anchor: Anchor.BottomLeft, size: new Vector2(260, -1), offset: new Vector2(offsetX, 0));
+            offsetX += 260;
+            changeThemeBtn.OnClick = (Entity entity) =>
+            {
+                int theme = (int)_currTheme + 1;
+                if (theme > (int)BuiltinThemes.editor)
+                {
+                    theme = 0;
+                }
+                InitializeThemeAndUI((BuiltinThemes)theme);
+            };
+            changeThemeBtn.ToolTipText = "Rotate through the built-in themes.";
+            UserInterface.Active.AddEntity(changeThemeBtn);
 
             // zoom in / out factor
             float zoominFactor = 0.05f;
@@ -567,7 +601,15 @@ The most common anchors are 'Auto' and 'AutoInline', which will place entities o
                     panel.AddChild(new Paragraph("Sliders help pick numeric value in range:"));
 
                     panel.AddChild(new Paragraph("\nDefault slider"));
-                    panel.AddChild(new Slider(0, 10, SliderSkin.Default));
+                    {
+                        var slider = panel.AddChild(new Slider(-10, 10, SliderSkin.Default)) as Slider;
+                        var valueLabel = new Label("Value: 0");
+                        slider.OnValueChange = (Entity entity) =>
+                        {
+                            valueLabel.Text = "Value: " + slider.Value;
+                        };
+                        panel.AddChild(valueLabel);
+                    }
 
                     panel.AddChild(new Paragraph("\nFancy slider"));
                     panel.AddChild(new Slider(0, 10, SliderSkin.Fancy));
@@ -602,7 +644,39 @@ The most common anchors are 'Auto' and 'AutoInline', which will place entities o
                     list.AddItem("Warlock");
                     list.AddItem("Barbarian");
                     list.AddItem("Monk");
-                    list.AddItem("Ranger");
+                    panel.AddChild(list);
+                }
+
+                // example: lists with icons
+                {
+                    // create panel and add to list of panels and manager
+                    Panel panel = new Panel(new Vector2(450, -1));
+                    panels.Add(panel);
+                    UserInterface.Active.AddEntity(panel);
+
+                    // list title
+                    panel.AddChild(new Header("SelectList with Icons"));
+                    panel.AddChild(new HorizontalLine());
+                    panel.AddChild(new Paragraph("You can also attach icons to items in lists:"));
+
+                    SelectList list = new SelectList(new Vector2(0, 280));
+                    list.AddItem("Warrior");
+                    list.AddItem("Mage");
+                    list.AddItem("Rogue");
+                    list.AddItem("Paladin");
+                    list.AddItem("Cleric");
+                    list.AddItem("Barbarian");
+                    list.AddItem("Necromancer");
+
+                    list.IconsScale *= 1.2f;
+                    list.SetIcon("textures/icons/Sword", "Warrior");
+                    list.SetIcon("textures/icons/MagicWand", "Mage");
+                    list.SetIcon("textures/icons/Trap", "Rogue");
+                    list.SetIcon("textures/icons/Axe", "Barbarian");
+                    list.SetIcon("textures/icons/MagicBook", "Cleric");
+                    list.SetIcon("textures/icons/Helmet", "Paladin");
+                    list.SetIcon("textures/icons/Bone", "Necromancer");
+
                     panel.AddChild(list);
                 }
 
@@ -658,7 +732,6 @@ The most common anchors are 'Auto' and 'AutoInline', which will place entities o
                     list.AddItem("Warlock");
                     list.AddItem("Barbarian");
                     list.AddItem("Monk");
-                    list.AddItem("Ranger");
                     panel.AddChild(list);
                 }
 
@@ -684,11 +757,11 @@ The most common anchors are 'Auto' and 'AutoInline', which will place entities o
                     drop.AddItem("Warlock");
                     drop.AddItem("Barbarian");
                     drop.AddItem("Monk");
-                    drop.AddItem("Ranger");
                     panel.AddChild(drop);
 
                     panel.AddChild(new Paragraph("And like list, we can set different skins:"));
                     drop = new DropDown(new Vector2(0, 180), skin: PanelSkin.Alternative);
+                    drop.AutoSetListHeight = true;
                     drop.AddItem("Warrior");
                     drop.AddItem("Mage");
                     drop.AddItem("Monk");
@@ -697,6 +770,7 @@ The most common anchors are 'Auto' and 'AutoInline', which will place entities o
 
                     panel.AddChild(new Paragraph("And per-item styling:"));
                     drop = new DropDown(new Vector2(0, 180), skin: PanelSkin.Alternative);
+                    drop.AutoSetListHeight = true;
                     drop.AddItem("{{L_RED}}Warrior");
                     drop.AddItem("{{L_BLUE}}Mage");
                     drop.AddItem("{{CYAN}}Monk");
@@ -995,6 +1069,47 @@ Maybe something interesting in tab3?"));
                                 ));
                         });
                     };
+                }
+
+                // example: file dialog
+                {
+                    // create panel and add to list of panels and manager
+                    Panel panel = new Panel(new Vector2(560, -1));
+                    panels.Add(panel);
+                    UserInterface.Active.AddEntity(panel);
+
+                    // add title and text
+                    panel.AddChild(new Header("File Dialogs"));
+                    panel.AddChild(new HorizontalLine());
+                    panel.AddChild(new Paragraph("GeonBit.UI also provide file dialogs. For example, save file dialog: \n"));
+
+                    // add save file button
+                    {
+                        var btn = panel.AddChild(new Button(@"Open Save File Dialog"));
+                        btn.OnClick += (Entity ent) =>
+                        {
+                            Utils.MessageBox.OpenSaveFileDialog("", (Utils.FileDialogResponse res) =>
+                            {
+                                Utils.MessageBox.ShowMsgBox("File Selected!", $"Selected file: '{res.FullPath}'.\n\nIn this example we just show a message box, in a real project we would use this path to save the file.");
+                                return true;
+                            }, message: "It won't actually save anything so don't worry about picking existing files.");
+                        };
+                    }
+
+                    panel.AddChild(new Paragraph("And click below to open load file dialog: \n"));
+
+                    // add load file button
+                    {
+                        var btn = panel.AddChild(new Button(@"Open Load File Dialog"));
+                        btn.OnClick += (Entity ent) =>
+                        {
+                            Utils.MessageBox.OpenLoadFileDialog("", (Utils.FileDialogResponse res) =>
+                            {
+                                Utils.MessageBox.ShowMsgBox("File Selected!", $"Selected file: '{res.FullPath}'.\n\nIn this example we just show a message box, in a real project we would use this path to load the file.");
+                                return true;
+                            }, message: "It won't actually load anything so don't worry about picking any file.");
+                        };
+                    }
                 }
 
                 // example: top menu
@@ -1332,22 +1447,22 @@ Click on 'Next' to see the character creation demo."));
                     // first name
                     TextInput firstName = new TextInput(false, new Vector2(0.4f, -1), anchor: Anchor.Auto);
                     firstName.PlaceholderText = "Name";
-                    firstName.Validators.Add(new TextValidatorEnglishCharsOnly(true));
+                    firstName.Validators.Add(new EnglishCharactersOnly(true));
                     firstName.Validators.Add(new OnlySingleSpaces());
-                    firstName.Validators.Add(new TextValidatorMakeTitle());
+                    firstName.Validators.Add(new MakeTitleCase());
                     panel.AddChild(firstName);
 
                     // last name
                     TextInput lastName = new TextInput(false, new Vector2(0.4f, -1), anchor: Anchor.AutoInline);
                     lastName.PlaceholderText = "Surname";
-                    lastName.Validators.Add(new TextValidatorEnglishCharsOnly(true));
+                    lastName.Validators.Add(new EnglishCharactersOnly(true));
                     lastName.Validators.Add(new OnlySingleSpaces());
-                    lastName.Validators.Add(new TextValidatorMakeTitle());
+                    lastName.Validators.Add(new MakeTitleCase());
                     panel.AddChild(lastName);
 
                     // age
                     TextInput age = new TextInput(false, new Vector2(0.2f, -1), anchor: Anchor.AutoInline);
-                    age.Validators.Add(new TextValidatorNumbersOnly(false, 0, 80));
+                    age.Validators.Add(new NumbersOnly(false, 0, 80));
                     age.Value = "20";
                     age.ValueWhenEmpty = "20";
                     panel.AddChild(age);
@@ -1377,7 +1492,7 @@ If you liked GeonBit.UI feel free to star the repo on GitHub. :)"));
 
             // once done init, clear events log
             eventsLog.ClearItems();
-            
+
             // call base initialize
             base.Initialize();
         }

@@ -158,7 +158,7 @@ namespace GeonBit.UI.Entities
         public IconType IconType
         {
             get { return _icon; }
-            set { Texture = Resources.IconTextures[value]; _icon = value; }
+            set { Texture = Resources.Instance.IconTextures[value]; _icon = value; }
         }
         IconType _icon;
 
@@ -173,7 +173,7 @@ namespace GeonBit.UI.Entities
         /// <param name="background">Whether or not to show icon inventory-like background.</param>
         /// <param name="offset">Offset from anchor position.</param>
         public Icon(IconType icon, Anchor anchor = Anchor.Auto, float scale = 1.0f, bool background = false, Vector2? offset = null) :
-            base(null, USE_DEFAULT_SIZE, ImageDrawMode.Stretch, anchor, offset)
+            base((Texture2D)null, USE_DEFAULT_SIZE, ImageDrawMode.Stretch, anchor, offset)
         {
             // set scale and basic properties
             Scale = scale;
@@ -232,7 +232,7 @@ namespace GeonBit.UI.Entities
                 dest.X -= BackgroundSize / 2; dest.Y -= BackgroundSize / 2; dest.Width += BackgroundSize; dest.Height += BackgroundSize;
 
                 // draw background
-                UserInterface.Active.DrawUtils.DrawImage(spriteBatch, Resources.IconBackgroundTexture, dest, backColor);
+                UserInterface.Active.DrawUtils.DrawImage(spriteBatch, Resources.Instance.IconBackgroundTexture, dest, backColor);
             }
 
             // now draw the image itself
