@@ -17,6 +17,7 @@ using GeonBit.UI.DataTypes;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
+using System.IO;
 
 namespace GeonBit.UI
 {
@@ -45,18 +46,18 @@ namespace GeonBit.UI
                 {
                     try
                     {
-                        _loadedTextures[indx] = Resources._content.Load<Texture2D>($"{Resources._root}{_basepath}{EnumToString(i)}{_suffix}");
+                        _loadedTextures[indx] = Resources.Instance._content.Load<Texture2D>($"{Resources.Instance._root}{_basepath}{EnumToString(i)}{_suffix}");
                     }
                     catch (Microsoft.Xna.Framework.Content.ContentLoadException ex)
                     {
                         try
                         {
-                            _loadedTextures[indx] = Resources._content.Load<Texture2D>($"{Resources._root}{_basepath}default{_suffix}");
+                            _loadedTextures[indx] = Resources.Instance._content.Load<Texture2D>($"{Resources.Instance._root}{_basepath}default{_suffix}");
                         }
                         catch (Microsoft.Xna.Framework.Content.ContentLoadException)
                         {
                             throw new Exception(
-                                $"Could not load texture {Resources._root}{_basepath}{EnumToString(i)}{_suffix} or fallback to {Resources._root}{_basepath}default{_suffix}", ex);
+                                $"Could not load texture {Resources.Instance._root}{_basepath}{EnumToString(i)}{_suffix} or fallback to {Resources.Instance._root}{_basepath}default{_suffix}", ex);
                         }
                     }
                 }
@@ -86,8 +87,8 @@ namespace GeonBit.UI
                 int indx = GetIndex(i, s);
                 if (_loadedTextures[indx] == null)
                 {
-                    var path = Resources._root + _basepath + EnumToString(i) + _suffix + StateEnumToString(s);
-                    _loadedTextures[indx] = Resources._content.Load<Texture2D>(path);
+                    var path = Resources.Instance._root + _basepath + EnumToString(i) + _suffix + StateEnumToString(s);
+                    _loadedTextures[indx] = Resources.Instance._content.Load<Texture2D>(path);
                 }
                 return _loadedTextures[indx];
             }
@@ -154,9 +155,6 @@ namespace GeonBit.UI
         // suffix to add to the end of texture path
         string _suffix;
 
-        // do we use states like down / hover / default for these textures?
-        bool _usesStates;
-
         // textures types count
         int _typesCount;
 
@@ -170,111 +168,122 @@ namespace GeonBit.UI
         {
             _basepath = path;
             _suffix = suffix ?? string.Empty;
-            _usesStates = usesStates;
             _typesCount = Enum.GetValues(typeof(TEnum)).Length;
             _loadedTextures = new Texture2D[usesStates ? _typesCount * 3 : _typesCount];
         }
     }
 
     /// <summary>
-    /// A static class to init and store all UI resources (textures, effects, fonts, etc.)
+    /// A class to init and store all UI resources (textures, effects, fonts, etc.)
     /// </summary>
-    public static class Resources
+    public class Resources
     {
+        /// <summary>
+        /// Resources singleton instance.
+        /// </summary>
+        public static Resources Instance { get; private set; }
+
+        /// <summary>
+        /// Reset resources manager.
+        /// </summary>
+        public static void Reset()
+        {
+            Instance = new Resources();
+        }
 
         /// <summary>Lookup for char > string conversion</summary>
-        private static Dictionary<char, string> charStringDict = new Dictionary<char, string>();
+        private Dictionary<char, string> charStringDict = new Dictionary<char, string>();
 
         /// <summary>Just a plain white texture, used internally.</summary>
-        public static Texture2D WhiteTexture;
+        public Texture2D WhiteTexture;
 
         /// <summary>Cursor textures.</summary>
-        public static TexturesGetter<CursorType> Cursors = new TexturesGetter<CursorType>("textures/cursor_");
+        public TexturesGetter<CursorType> Cursors = new TexturesGetter<CursorType>("textures/cursor_");
 
         /// <summary>Metadata about cursor textures.</summary>
-        public static CursorTextureData[] CursorsData;
+        public CursorTextureData[] CursorsData;
 
         /// <summary>All panel skin textures.</summary>
-        public static TexturesGetter<PanelSkin> PanelTextures = new TexturesGetter<PanelSkin>("textures/panel_");
+        public TexturesGetter<PanelSkin> PanelTextures = new TexturesGetter<PanelSkin>("textures/panel_");
 
         /// <summary>Metadata about panel textures.</summary>
-        public static TextureData[] PanelData;
+        public TextureData[] PanelData;
 
         /// <summary>Button textures (accessed as [skin, state]).</summary>
-        public static TexturesGetter<ButtonSkin> ButtonTextures = new TexturesGetter<ButtonSkin>("textures/button_");
+        public TexturesGetter<ButtonSkin> ButtonTextures = new TexturesGetter<ButtonSkin>("textures/button_");
 
         /// <summary>Metadata about button textures.</summary>
-        public static TextureData[] ButtonData;
+        public TextureData[] ButtonData;
 
         /// <summary>CheckBox textures.</summary>
-        public static TexturesGetter<EntityState> CheckBoxTextures = new TexturesGetter<EntityState>("textures/checkbox");
+        public TexturesGetter<EntityState> CheckBoxTextures = new TexturesGetter<EntityState>("textures/checkbox");
 
         /// <summary>Radio button textures.</summary>
-        public static TexturesGetter<EntityState> RadioTextures = new TexturesGetter<EntityState>("textures/radio");
+        public TexturesGetter<EntityState> RadioTextures = new TexturesGetter<EntityState>("textures/radio");
 
         /// <summary>ProgressBar texture.</summary>
-        public static Texture2D ProgressBarTexture;
+        public Texture2D ProgressBarTexture;
 
         /// <summary>Metadata about progressbar texture.</summary>
-        public static TextureData ProgressBarData;
+        public TextureData ProgressBarData;
 
         /// <summary>ProgressBar fill texture.</summary>
-        public static Texture2D ProgressBarFillTexture;
+        public Texture2D ProgressBarFillTexture;
 
         /// <summary>HorizontalLine texture.</summary>
-        public static Texture2D HorizontalLineTexture;
+        public Texture2D HorizontalLineTexture;
 
         /// <summary>Sliders base textures.</summary>
-        public static TexturesGetter<SliderSkin> SliderTextures = new TexturesGetter<SliderSkin>("textures/slider_");
+        public TexturesGetter<SliderSkin> SliderTextures = new TexturesGetter<SliderSkin>("textures/slider_");
 
         /// <summary>Sliders mark textures (the sliding piece that shows current value).</summary>
-        public static TexturesGetter<SliderSkin> SliderMarkTextures = new TexturesGetter<SliderSkin>("textures/slider_", "_mark");
+        public TexturesGetter<SliderSkin> SliderMarkTextures = new TexturesGetter<SliderSkin>("textures/slider_", "_mark");
 
         /// <summary>Metadata about slider textures.</summary>
-        public static TextureData[] SliderData;
+        public TextureData[] SliderData;
 
         /// <summary>All icon textures.</summary>
-        public static TexturesGetter<IconType> IconTextures = new TexturesGetter<IconType>("textures/icons/");
+        public TexturesGetter<IconType> IconTextures = new TexturesGetter<IconType>("textures/icons/");
 
         /// <summary>Icons inventory background texture.</summary>
-        public static Texture2D IconBackgroundTexture;
+        public Texture2D IconBackgroundTexture;
 
         /// <summary>Vertical scrollbar base texture.</summary>
-        public static Texture2D VerticalScrollbarTexture;
+        public Texture2D VerticalScrollbarTexture;
 
         /// <summary>Vertical scrollbar mark texture.</summary>
-        public static Texture2D VerticalScrollbarMarkTexture;
+        public Texture2D VerticalScrollbarMarkTexture;
 
         /// <summary>Metadata about scrollbar texture.</summary>
-        public static TextureData VerticalScrollbarData;
+        public TextureData VerticalScrollbarData;
 
         /// <summary>Arrow-down texture (used in dropdown).</summary>
-        public static Texture2D ArrowDown;
+        public Texture2D ArrowDown;
 
         /// <summary>Arrow-up texture (used in dropdown).</summary>
-        public static Texture2D ArrowUp;
+        public Texture2D ArrowUp;
 
         /// <summary>Default font types.</summary>
-        public static SpriteFont[] Fonts;
+        public SpriteFont[] Fonts;
 
         /// <summary>Effect for disabled entities (greyscale).</summary>
-        public static Effect DisabledEffect;
+        public Effect DisabledEffect;
 
         /// <summary>An effect to draw just a silhouette of the texture.</summary>
-        public static Effect SilhouetteEffect;
+        public Effect SilhouetteEffect;
 
         /// <summary>Store the content manager instance</summary>
-        internal static ContentManager _content;
+        internal ContentManager _content;
 
         /// <summary>Root for geonbit.ui content</summary>
-        internal static string _root;
+        internal string _root;
 
         /// <summary>
         /// Load all GeonBit.UI resources.
         /// </summary>
         /// <param name="content">Content manager to use.</param>
         /// <param name="theme">Which theme to load resources from.</param>
-        static public void LoadContent(ContentManager content, string theme = "default")
+        public void LoadContent(ContentManager content, string theme = "default")
         {
             InitialiseCharStringDict();
 
@@ -282,7 +291,7 @@ namespace GeonBit.UI
             _root = "GeonBit.UI/themes/" + theme + "/";
             _content = content;
 
-            // set Texture2D static fields
+            // set Texture2D fields
             HorizontalLineTexture = _content.Load<Texture2D>(_root + "textures/horizontal_line");
             WhiteTexture = _content.Load<Texture2D>(_root + "textures/white_texture");
             IconBackgroundTexture = _content.Load<Texture2D>(_root + "textures/icons/background");
@@ -298,7 +307,7 @@ namespace GeonBit.UI
             foreach (CursorType cursor in Enum.GetValues(typeof(CursorType)))
             {
                 string cursorName = cursor.ToString().ToLowerInvariant();
-                CursorsData[(int)cursor] = content.Load<CursorTextureData>(_root + "textures/cursor_" + cursorName + "_md");
+                CursorsData[(int)cursor] = LoadXmlCursorData(_root + "textures/cursor_" + cursorName + "_md");
             }
 
             // load panels
@@ -315,14 +324,14 @@ namespace GeonBit.UI
                 string skinName = skin.ToString().ToLowerInvariant();
                 try
                 {
-                    PanelData[(int)skin] = content.Load<TextureData>($"{_root}textures/panel_{skinName}_md");
+                    PanelData[(int)skin] = LoadXmlTextureData(_root + "textures/panel_" + skinName + "_md");
                 }
-                catch (Microsoft.Xna.Framework.Content.ContentLoadException ex)
+                catch (ContentLoadException ex)
                 {
                     // Fall back to "Default" if the skin does not exist
                     try
                     {
-                        PanelData[(int)skin] = content.Load<TextureData>($"{_root}textures/panel_default_md");
+                        PanelData[(int)skin] = LoadXmlTextureData($"{_root}textures/panel_default_md");
                     }
                     catch (Microsoft.Xna.Framework.Content.ContentLoadException)
                     {
@@ -332,23 +341,24 @@ namespace GeonBit.UI
             }
 
             // load scrollbar metadata
-            VerticalScrollbarData = content.Load<TextureData>(_root + "textures/scrollbar_md");
+            VerticalScrollbarData = LoadXmlTextureData(_root + "textures/scrollbar_md");
 
             // load slider metadata
             SliderData = new TextureData[Enum.GetValues(typeof(SliderSkin)).Length];
             foreach (SliderSkin skin in Enum.GetValues(typeof(SliderSkin)))
             {
                 string skinName = skin.ToString().ToLowerInvariant();
+                SliderData[(int)skin] = LoadXmlTextureData(_root + "textures/slider_" + skinName + "_md");
                 try
                 {
-                    SliderData[(int)skin] = content.Load<TextureData>($"{_root}textures/slider_{skinName}_md");
+                    SliderData[(int)skin] = LoadXmlTextureData($"{_root}textures/slider_{skinName}_md");
                 }
                 catch (Microsoft.Xna.Framework.Content.ContentLoadException ex)
                 {
                     try
                     {
                         SliderData[(int)skin] =
-                            content.Load<TextureData>($"{_root}textures/slider_default_md");
+                            LoadXmlTextureData($"{_root}textures/slider_default_md");
                     }
                     catch (Microsoft.Xna.Framework.Content.ContentLoadException)
                     {
@@ -364,7 +374,6 @@ namespace GeonBit.UI
             foreach (FontStyle style in Enum.GetValues(typeof(FontStyle)))
             {
                 Fonts[(int)style] = content.Load<SpriteFont>(_root + "fonts/" + style.ToString());
-                Fonts[(int)style].LineSpacing += 2;
             }
 
             // load buttons metadata
@@ -375,13 +384,13 @@ namespace GeonBit.UI
                 
                 try
                 {
-                    ButtonData[(int)skin] = content.Load<TextureData>($"{_root}textures/button_{skinName}_md");
+                    ButtonData[(int)skin] = LoadXmlTextureData($"{_root}textures/button_{skinName}_md");
                 }
                 catch (Microsoft.Xna.Framework.Content.ContentLoadException ex)
                 {
                     try
                     {
-                        ButtonData[(int)skin] = content.Load<TextureData>($"{_root}textures/button_default_md");
+                        ButtonData[(int)skin] = LoadXmlTextureData($"{_root}textures/button_default_md");
                     }
                     catch (Microsoft.Xna.Framework.Content.ContentLoadException)
                     {
@@ -393,49 +402,58 @@ namespace GeonBit.UI
             }
 
             // load progress bar metadata
-            ProgressBarData = content.Load<TextureData>(_root + "textures/progressbar_md");
+            ProgressBarData = LoadXmlTextureData(_root + "textures/progressbar_md");
 
             // load effects
             DisabledEffect = content.Load<Effect>(_root + "effects/disabled");
             SilhouetteEffect = content.Load<Effect>(_root + "effects/silhouette");
 
             // load default styleSheets
-            LoadDefaultStyles( Entity.DefaultStyle, "Entity", _root, content);
-            LoadDefaultStyles( Paragraph.DefaultStyle, "Paragraph", _root, content);
-            LoadDefaultStyles( Button.DefaultStyle, "Button", _root, content);
-            LoadDefaultStyles( Button.DefaultParagraphStyle, "ButtonParagraph", _root, content);
-            LoadDefaultStyles( CheckBox.DefaultStyle, "CheckBox", _root, content);
-            LoadDefaultStyles( CheckBox.DefaultParagraphStyle, "CheckBoxParagraph", _root, content);
-            LoadDefaultStyles( ColoredRectangle.DefaultStyle, "ColoredRectangle", _root, content);
-            LoadDefaultStyles( DropDown.DefaultStyle, "DropDown", _root, content);
-            LoadDefaultStyles( DropDown.DefaultParagraphStyle, "DropDownParagraph", _root, content);
-            LoadDefaultStyles( DropDown.DefaultSelectedParagraphStyle, "DropDownSelectedParagraph", _root, content);
-            LoadDefaultStyles( Header.DefaultStyle, "Header", _root, content);
-            LoadDefaultStyles( HorizontalLine.DefaultStyle, "HorizontalLine", _root, content);
-            LoadDefaultStyles( Icon.DefaultStyle, "Icon", _root, content);
-            LoadDefaultStyles( Image.DefaultStyle, "Image", _root, content);
-            LoadDefaultStyles( Label.DefaultStyle, "Label", _root, content);
-            LoadDefaultStyles( Panel.DefaultStyle, "Panel", _root, content);
-            LoadDefaultStyles( ProgressBar.DefaultStyle, "ProgressBar", _root, content);
-            LoadDefaultStyles( ProgressBar.DefaultFillStyle, "ProgressBarFill", _root, content);
-            LoadDefaultStyles( RadioButton.DefaultStyle, "RadioButton", _root, content);
-            LoadDefaultStyles( RadioButton.DefaultParagraphStyle, "RadioButtonParagraph", _root, content);
-            LoadDefaultStyles( SelectList.DefaultStyle, "SelectList", _root, content);
-            LoadDefaultStyles( SelectList.DefaultParagraphStyle, "SelectListParagraph", _root, content);
-            LoadDefaultStyles( Slider.DefaultStyle, "Slider", _root, content);
-            LoadDefaultStyles( TextInput.DefaultStyle, "TextInput", _root, content);
-            LoadDefaultStyles( TextInput.DefaultParagraphStyle, "TextInputParagraph", _root, content);
-            LoadDefaultStyles( TextInput.DefaultPlaceholderStyle, "TextInputPlaceholder", _root, content);
-            LoadDefaultStyles( VerticalScrollbar.DefaultStyle, "VerticalScrollbar", _root, content);
-            LoadDefaultStyles( PanelTabs.DefaultButtonStyle, "PanelTabsButton", _root, content);
-            LoadDefaultStyles( PanelTabs.DefaultButtonParagraphStyle, "PanelTabsButtonParagraph", _root, content);
+            LoadDefaultStyles( Entity.DefaultStyle, "Entity", _root);
+            LoadDefaultStyles( Paragraph.DefaultStyle, "Paragraph", _root);
+            LoadDefaultStyles( Button.DefaultStyle, "Button", _root);
+            LoadDefaultStyles( Button.DefaultParagraphStyle, "ButtonParagraph", _root);
+            LoadDefaultStyles( CheckBox.DefaultStyle, "CheckBox", _root);
+            LoadDefaultStyles( CheckBox.DefaultParagraphStyle, "CheckBoxParagraph", _root);
+            LoadDefaultStyles( ColoredRectangle.DefaultStyle, "ColoredRectangle", _root);
+            LoadDefaultStyles( DropDown.DefaultStyle, "DropDown", _root);
+            try
+            {
+                LoadDefaultStyles(DropDown.DefaultSelectedPanelStyle, "DropDownSelectedPanel", _root);
+            }
+            catch (ContentLoadException)
+            {
+                LoadDefaultStyles(DropDown.DefaultSelectedPanelStyle, "Panel", _root);
+                DropDown.DefaultSelectedPanelStyle.SetStyleProperty("DefaultSize", new StyleProperty(Vector2.Zero));
+            }
+            LoadDefaultStyles( DropDown.DefaultParagraphStyle, "DropDownParagraph", _root);
+            LoadDefaultStyles( DropDown.DefaultSelectedParagraphStyle, "DropDownSelectedParagraph", _root);
+            LoadDefaultStyles( Header.DefaultStyle, "Header", _root);
+            LoadDefaultStyles( HorizontalLine.DefaultStyle, "HorizontalLine", _root);
+            LoadDefaultStyles( Icon.DefaultStyle, "Icon", _root);
+            LoadDefaultStyles( Image.DefaultStyle, "Image", _root);
+            LoadDefaultStyles( Label.DefaultStyle, "Label", _root);
+            LoadDefaultStyles( Panel.DefaultStyle, "Panel", _root);
+            LoadDefaultStyles( ProgressBar.DefaultStyle, "ProgressBar", _root);
+            LoadDefaultStyles( ProgressBar.DefaultFillStyle, "ProgressBarFill", _root);
+            LoadDefaultStyles( RadioButton.DefaultStyle, "RadioButton", _root);
+            LoadDefaultStyles( RadioButton.DefaultParagraphStyle, "RadioButtonParagraph", _root);
+            LoadDefaultStyles( SelectList.DefaultStyle, "SelectList", _root);
+            LoadDefaultStyles( SelectList.DefaultParagraphStyle, "SelectListParagraph", _root);
+            LoadDefaultStyles( Slider.DefaultStyle, "Slider", _root);
+            LoadDefaultStyles( TextInput.DefaultStyle, "TextInput", _root);
+            LoadDefaultStyles( TextInput.DefaultParagraphStyle, "TextInputParagraph", _root);
+            LoadDefaultStyles( TextInput.DefaultPlaceholderStyle, "TextInputPlaceholder", _root);
+            LoadDefaultStyles( VerticalScrollbar.DefaultStyle, "VerticalScrollbar", _root);
+            LoadDefaultStyles( PanelTabs.DefaultButtonStyle, "PanelTabsButton", _root);
+            LoadDefaultStyles( PanelTabs.DefaultButtonParagraphStyle, "PanelTabsButtonParagraph", _root);
         }
 
 
         /// <summary>
         /// Creates Dictionary containing char > string lookup
         /// </summary>
-        private static void InitialiseCharStringDict()
+        private void InitialiseCharStringDict()
         {
             charStringDict.Clear();
 
@@ -453,41 +471,69 @@ namespace GeonBit.UI
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
-        public static string GetStringForChar(char c)
+        public string GetStringForChar(char c)
         {
             if (!charStringDict.ContainsKey(c)) { return c.ToString(); }
             return charStringDict[c];
+        }
+        /// <summary>
+        /// Load xml file either directly from xml file, or from the content manager.
+        /// </summary>
+        /// <param name="name">XML file name.</param>
+        /// <returns>T instance loaded from xml file or content manager.</returns>
+        private T LoadXml<T>(string name) where T : new()
+        {
+            // try to load xml directly from full path
+            string fullPath = Path.Combine(_content.RootDirectory, name + ".xml");
+            if (File.Exists(fullPath))
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(T));
+                using (var reader = File.OpenText(fullPath))
+                {
+                    XmlDeserializationEvents eventsHandler = new XmlDeserializationEvents()
+                    {
+                        OnUnknownAttribute = (object sender, XmlAttributeEventArgs e) => { throw new Exception("Error parsing file '" + fullPath + "': invalid attribute '" + e.Attr.Name + "' at line " + e.LineNumber); },
+                        OnUnknownElement = (object sender, XmlElementEventArgs e) => { throw new Exception("Error parsing file '" + fullPath + "': invalid element '" + e.Element.Name + "' at line " + e.LineNumber); },
+                        OnUnknownNode = (object sender, XmlNodeEventArgs e) => { throw new Exception("Error parsing file '" + fullPath + "': invalid element '" + e.Name + "' at line " + e.LineNumber); },
+                        OnUnreferencedObject = (object sender, UnreferencedObjectEventArgs e) => { throw new Exception("Error parsing file '" + fullPath + "': unreferenced object '" + e.UnreferencedObject.ToString() + "'"); },
+                    };
+                    return (T)serializer.Deserialize(System.Xml.XmlReader.Create(reader), eventsHandler);
+                }
+            }
+
+            // if xml file not found, try to load xnb instead
+            var ret = _content.Load<T>(name);
+            return ret;
+        }
+
+        /// <summary>
+        /// Load xml texture data either directly from xml file, or from the content manager.
+        /// </summary>
+        /// <param name="name">XML name.</param>
+        /// <returns>Texture data loaded from xml or xnb.</returns>
+        private TextureData LoadXmlTextureData(string name)
+        {
+            return LoadXml<TextureData>(name);
+        }
+
+        /// <summary>
+        /// Load xml cursor data either directly from xml file, or from the content manager.
+        /// </summary>
+        /// <param name="name">XML name.</param>
+        /// <returns>Cursor texture data loaded from xml or xnb.</returns>
+        private CursorTextureData LoadXmlCursorData(string name)
+        {
+            return LoadXml<CursorTextureData>(name);
         }
 
         /// <summary>
         /// Load xml styles either directly from xml file, or from the content manager.
         /// </summary>
         /// <param name="name">XML name.</param>
-        /// <param name="content">Content manager.</param>
         /// <returns>Default styles loaded from xml or xnb.</returns>
-        private static DefaultStyles LoadXmlStyles(string name, ContentManager content)
+        private DefaultStyles LoadXmlStyles(string name)
         {
-            // try to load xml directly from full path
-            string fullPath = System.IO.Path.Combine(content.RootDirectory, name + ".xml");
-            if (System.IO.File.Exists(fullPath))
-            {
-                XmlSerializer serializer = new XmlSerializer(typeof(DefaultStyles));
-                using (var reader = System.IO.File.OpenText(fullPath))
-                {
-                    XmlDeserializationEvents eventsHandler = new XmlDeserializationEvents()
-                    {
-                        OnUnknownAttribute = (object sender, XmlAttributeEventArgs e) => { throw new System.Exception("Error parsing file '" + fullPath + "': invalid attribute '" + e.Attr.Name + "' at line " + e.LineNumber); },
-                        OnUnknownElement = (object sender, XmlElementEventArgs e) => { throw new System.Exception("Error parsing file '" + fullPath + "': invalid element '" + e.Element.Name + "' at line " + e.LineNumber); },
-                        OnUnknownNode = (object sender, XmlNodeEventArgs e) => { throw new System.Exception("Error parsing file '" + fullPath + "': invalid element '" + e.Name + "' at line " + e.LineNumber); },
-                        OnUnreferencedObject = (object sender, UnreferencedObjectEventArgs e) => { throw new System.Exception("Error parsing file '" + fullPath + "': unreferenced object '" + e.UnreferencedObject.ToString() + "'"); },
-                    };
-                    
-                    return (DefaultStyles)serializer.Deserialize(System.Xml.XmlReader.Create(reader), eventsHandler);
-                }
-            }
-
-            // if xml file not found, try to load xnb instead
-            return content.Load<DefaultStyles>(name);
+            return LoadXml<DefaultStyles>(name);
         }
 
         /// <summary>
@@ -496,20 +542,32 @@ namespace GeonBit.UI
         /// <param name="sheet">StyleSheet to load.</param>
         /// <param name="entityName">Entity unique identifier for file names.</param>
         /// <param name="themeRoot">Path of the current theme root directory.</param>
-        /// <param name="content">Content manager to allow us to load xmls.</param>
-        private static void LoadDefaultStyles(StyleSheet sheet, string entityName, string themeRoot, ContentManager content)
+        private void LoadDefaultStyles(StyleSheet sheet, string entityName, string themeRoot)
         {
+            // clear previous styles
+            sheet.Clear();
+
             // get stylesheet root path (eg everything before the state part)
             string stylesheetBase = themeRoot + "styles/" + entityName;
 
             // load default styles
-            FillDefaultStyles(sheet, EntityState.Default, LoadXmlStyles($"{stylesheetBase}-Default", content));
+            FillDefaultStyles(sheet, EntityState.Default, LoadXmlStyles($"{stylesheetBase}-Default"));
 
             // load mouse-hover styles
-            FillDefaultStyles(sheet, EntityState.MouseHover, LoadXmlStyles($"{stylesheetBase}-MouseHover", content));
+            FillDefaultStyles(sheet, EntityState.MouseHover, LoadXmlStyles($"{stylesheetBase}-MouseHover"));
 
             // load mouse-down styles
-            FillDefaultStyles(sheet, EntityState.MouseDown, LoadXmlStyles($"{stylesheetBase}-MouseDown", content));
+            FillDefaultStyles(sheet, EntityState.MouseDown, LoadXmlStyles($"{stylesheetBase}-MouseDown"));
+        }
+
+        /// <summary>
+        /// Load texture from path.
+        /// </summary>
+        /// <param name="path">Texture path, under theme folder.</param>
+        /// <returns>Texture instance.</returns>
+        public Texture2D LoadTexture(string path)
+        {
+            return _content.Load<Texture2D>(Path.Combine(_root, path));
         }
 
         /// <summary>
@@ -518,7 +576,7 @@ namespace GeonBit.UI
         /// <param name="sheet">StyleSheet to fill.</param>
         /// <param name="state">State to fill values for.</param>
         /// <param name="styles">Default styles, as loaded from xml file.</param>
-        private static void FillDefaultStyles(StyleSheet sheet, EntityState state, DefaultStyles styles)
+        private void FillDefaultStyles(StyleSheet sheet, EntityState state, DefaultStyles styles)
         {
             if (styles.FillColor != null) { sheet[$"{state}.FillColor"] = new StyleProperty((Color)styles.FillColor); }
             if (styles.FontStyle != null) { sheet[$"{state}.FontStyle"] = new StyleProperty((int)styles.FontStyle); }
