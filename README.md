@@ -2098,9 +2098,13 @@ If you want to use the new files dialog, you must include the new textures that 
 - Fixed files dialog to show folders if can pick them, even if can't change root folder.
 - Fixed background offset bug in selected list item with icon.
 
-### 4.3.0.1
+### 4.3.0.2
 
+- Update to .Net 7.
 - Added rotation to paragraphs.
+- Fixed text input validators to properly allow spaces.
+- Fixed number validators to not allow spaces.
+- Added example for text validators.
 
 ## Credits
 
