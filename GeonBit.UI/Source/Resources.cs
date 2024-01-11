@@ -348,7 +348,7 @@ namespace GeonBit.UI
             foreach (SliderSkin skin in Enum.GetValues(typeof(SliderSkin)))
             {
                 string skinName = skin.ToString().ToLowerInvariant();
-                SliderData[(int)skin] = LoadXmlTextureData(_root + "textures/slider_" + skinName + "_md");
+
                 try
                 {
                     SliderData[(int)skin] = LoadXmlTextureData($"{_root}textures/slider_{skinName}_md");
