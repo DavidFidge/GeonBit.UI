@@ -1677,8 +1677,8 @@ namespace GeonBit.UI.Entities
 
             // calc and return size
             return new Point(
-                (size.X == 0f ? parentDest.Width : (size.X > 0f && size.X < 1f ? (int)(parentDest.Width * size.X) : (int)size.X)),
-                (size.Y == 0f ? parentDest.Height : (size.Y > 0f && size.Y < 1f ? (int)(parentDest.Height * size.Y) : (int)size.Y)));
+                (size.X == 0f ? parentDest.Width : (size.X > 0f && size.X <= 1f ? (int)(parentDest.Width * size.X) : (int)size.X)),
+                (size.Y == 0f ? parentDest.Height : (size.Y > 0f && size.Y <= 1f ? (int)(parentDest.Height * size.Y) : (int)size.Y)));
         }
 
         /// <summary>
