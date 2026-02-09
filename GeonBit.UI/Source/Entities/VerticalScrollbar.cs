@@ -106,6 +106,7 @@ namespace GeonBit.UI.Entities
                 float internalHeight = (_destRect.Height - _frameActualHeight) - _markHeight * 0.5f;
                 float relativeVal = (relativePos / internalHeight);
                 Value = (int)System.Math.Round(Min + relativeVal * (Max - Min));
+				CheckLockedToMax();
             }
 
             // call event handler
@@ -211,6 +212,9 @@ namespace GeonBit.UI.Entities
 
                 // set steps count
                 StepsCount = (uint)(Max - Min) / 80;
+
+                if (LockedToMax)
+                    ChangeValue(Max, true);
             }
         }
 
@@ -221,6 +225,7 @@ namespace GeonBit.UI.Entities
         override protected void DoOnMouseWheelScroll()
         {
             Value = _value - MouseInput.MouseWheelChange * GetStepSize();
+            CheckLockedToMax();
         }
     }
 }

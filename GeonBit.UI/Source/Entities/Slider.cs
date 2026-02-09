@@ -48,6 +48,9 @@ namespace GeonBit.UI.Entities
         /// <summary>Max slider value.</summary>
         protected int _max;
 
+        public bool LockedToMax { get; set; }
+        public bool LockToMaxOnMaxScroll { get; set; }
+
         /// <summary>How many steps (ticks) are in range.</summary>
         protected uint _stepsCount = 0;
 
@@ -273,8 +276,22 @@ namespace GeonBit.UI.Entities
                 Value = (int)(Min + val * (Max - Min));
             }
 
+            CheckLockedToMax();
+
             // call base handler
             base.DoWhileMouseDown();
+        }
+
+        protected void CheckLockedToMax()
+        {
+            if (Value == Max && LockToMaxOnMaxScroll)
+            {
+                LockedToMax = true;
+            }
+            else if (Value < Max)
+            {
+                LockedToMax = false;
+            }
         }
 
         /// <summary>
@@ -334,6 +351,7 @@ namespace GeonBit.UI.Entities
             if (_isMouseOver)
             {
                 Value = _value + MouseInput.MouseWheelChange * GetStepSize();
+                CheckLockedToMax();
             }
         }
     }
