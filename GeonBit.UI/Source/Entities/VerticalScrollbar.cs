@@ -34,6 +34,11 @@ namespace GeonBit.UI.Entities
         /// </summary>
         public bool AdjustMaxAutomatically = false;
 
+        /// <summary>
+        /// If true, mouse wheel scrolling on the parent panel (or one of its children) will scroll this scrollbar.
+        /// </summary>
+        public bool EnableParentPanelMouseWheelScrolling = true;
+
         /// <summary>Default styling for vertical scrollbars. Note: loaded from UI theme xml file.</summary>
         new public static StyleSheet DefaultStyle = new StyleSheet();
 
@@ -159,7 +164,7 @@ namespace GeonBit.UI.Entities
         override protected void DoAfterUpdate()
         {
             // if the active entity is self or parent, listen to mousewheel
-            if (_isInteractable &&
+            if (_isInteractable && EnableParentPanelMouseWheelScrolling &&
                 (UserInterface.Active.ActiveEntity == this ||
                 UserInterface.Active.ActiveEntity == _parent ||
                 (UserInterface.Active.ActiveEntity != null && UserInterface.Active.ActiveEntity.IsDeepChildOf(_parent))))
